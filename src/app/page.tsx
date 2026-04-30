@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import { AboutUs } from '~/components/AboutUs'
 import { Countdown, CountdownFallback } from '~/components/Countdown'
 import { AddToCalendar } from '~/components/Countdown/AddToCalendar'
 import { MainHero, MainHeroFallback } from '~/components/MainHero'
@@ -19,6 +20,10 @@ export default function Home() {
           <AddToCalendar datetime={DATE} durationInHours={DURATION_HOURS} address={ADDRESS} />
         </Countdown>
       </Suspense>
+
+      <AboutUs />
+
+      <OrnamentDivider />
 
       <div className="h-dvh bg-background">
 

@@ -1,9 +1,24 @@
-import { MainHero } from '~/components/MainHero'
+import { Suspense } from 'react'
+import { Countdown, CountdownFallback } from '~/components/Countdown'
+import { AddToCalendar } from '~/components/Countdown/AddToCalendar'
+import { MainHero, MainHeroFallback } from '~/components/MainHero'
+import { OrnamentDivider } from '~/components/OrnamentDivider'
+import { ADDRESS, DATE, DURATION_HOURS } from '~/config/data'
 
 export default function Home() {
   return (
     <div className="main">
-      <MainHero />
+      <Suspense fallback={<MainHeroFallback />}>
+        <MainHero date={DATE} address={ADDRESS} />
+      </Suspense>
+
+      <OrnamentDivider />
+
+      <Suspense fallback={<CountdownFallback />}>
+        <Countdown target={DATE}>
+          <AddToCalendar datetime={DATE} durationInHours={DURATION_HOURS} address={ADDRESS} />
+        </Countdown>
+      </Suspense>
 
       <div className="h-dvh bg-background">
 

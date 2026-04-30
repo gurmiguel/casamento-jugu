@@ -1,0 +1,18 @@
+@import url("https://cdn.jsdelivr.net/npm/add-to-calendar-button@2.13.10/assets/css/atcb.min.css");
+
+.atcb-list {
+  min-width: min(320px, 60dvw);
+
+  &:before {
+    content: 'Adicione ao Calendário';
+    display: block;
+    text-align: center;
+    padding-block: 1rem;
+    border-top-right-radius: inherit;
+    border-top-left-radius: inherit;
+    border-bottom: 1px solid #fff2;
+    font-size: 1.25rem;
+    font-family: var(--serif);
+    background: color-mix(in srgb, var(--list-background), #000 10%);
+  }
+}

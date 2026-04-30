@@ -1,9 +1,13 @@
 @import "tailwindcss";
 @import "../config/theme";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: var(--font-alegreya-sans), var(--font-sans);
-  --font-serif: var(--font-alegreya-serif), var(--font-serif);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
 
   --default-font-family: var(--font-serif);
 }
@@ -14,6 +18,15 @@
   }
 
   .font-calligraphy {
-    font-family: var(--font-calligraphy), var(--font-serif);
+    font-family: var(--font-calligraphy, var(--font-serif));
+  }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  #atcb-customTrigger-atcb-btn-custom-host {
+    display: none;
   }
 }

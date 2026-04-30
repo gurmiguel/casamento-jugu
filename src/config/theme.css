@@ -32,8 +32,6 @@
   --sidebar-accent-foreground: oklch(1.0000 0 0);
   --sidebar-border: oklch(0.6440 0.0405 52.3917);
   --sidebar-ring: oklch(0.6083 0.0623 44.3588);
-  --font-sans: Alegreya Sans, ui-sans-serif, sans-serif, system-ui;
-  --font-serif: Alegreya SC, ui-serif, serif;
   --font-mono: Menlo, monospace;
   --radius: 0.5rem;
   --shadow-x: 2px;
@@ -87,8 +85,6 @@
   --sidebar-accent-foreground: oklch(0.2225 0.0098 52.9636);
   --sidebar-border: oklch(0.4063 0.0255 40.3627);
   --sidebar-ring: oklch(0.7272 0.0539 52.3320);
-  --font-sans: Alegreya Sans, ui-sans-serif, sans-serif, system-ui;
-  --font-serif: Alegreya SC, ui-serif, serif;
   --font-mono: Menlo, monospace;
   --radius: 0.5rem;
   --shadow-x: 2px;
@@ -143,6 +139,7 @@
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
+  --font-calligraphy: var(--font-calligraphy);
   --font-serif: var(--font-serif);
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -159,3 +156,9 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 }
+
+.font-times {
+  font-family: 'Times New Roman', Times, serif;
+}
+
+@import "./utilities/positioning.css";

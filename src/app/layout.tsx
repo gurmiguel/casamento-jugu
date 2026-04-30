@@ -1,24 +1,7 @@
 import type { Metadata } from 'next'
-import { Alegreya_SC, Alegreya_Sans, Imperial_Script } from 'next/font/google'
+import { fontCalligraphy, fontSans, fontSerif } from '~/config/theme'
 import './globals.css'
-
-const alegreyaSans = Alegreya_Sans({
-  display: 'swap',
-  variable: '--font-alegreya-sans',
-  weight: ['100', '400', '700'],
-})
-
-const alegreyaSerif = Alegreya_SC({
-  display: 'swap',
-  variable: '--font-alegreya-serif',
-  weight: ['400', '700'],
-})
-
-const fontCalligraphy = Imperial_Script({
-  weight: ['400'],
-  display: 'swap',
-  variable: '--font-calligraphy',
-})
+import ReactDOM from 'react-dom'
 
 export const metadata: Metadata = {
   title: 'Casamento - Juliana e Gustavo',
@@ -31,10 +14,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br" className={`${alegreyaSerif.variable} ${alegreyaSans.variable} ${fontCalligraphy.variable} antialiased`}>
+    <html lang="pt-br" className={`${fontSerif.variable} ${fontSans.variable} ${fontCalligraphy.variable} antialiased`}>
+      <PreloadResources />
       <body>
         {children}
       </body>
     </html>
   )
+}
+
+function PreloadResources() {
+  ReactDOM.preload('https://cdn.jsdelivr.net/npm/add-to-calendar-button@2.13.10/assets/css/atcb.min.css', { as: 'style' })
+  ReactDOM.preload('/add-to-calendar.custom.css', { as: 'style' })
+
+  return null
 }

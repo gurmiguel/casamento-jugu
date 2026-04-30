@@ -1,0 +1,15 @@
+@utility abs-center-x {
+  left: 50%;
+  right: auto;
+  @apply -translate-x-1/2;
+}
+
+@utility abs-center-y {
+  top: 50%;
+  bottom: auto;
+  @apply -translate-y-1/2;
+}
+
+@utility abs-center-xy {
+  @apply abs-center-x abs-center-y;
+}

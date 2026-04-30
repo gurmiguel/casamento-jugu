@@ -26,9 +26,9 @@ export function CountdownBox({ type, seconds }: Props) {
 
   return (
     <div className="flex-1 flex flex-col justify-center items-center rounded-3xl bg-secondary/10 border-2 border-muted-foreground/30 text-center aspect-square">
-      <div className="text-7xl font-times font-thin">{seconds >= 0 ? String(Math.floor(time)).padStart(2, '0') : <br/>}</div>
+      <div className="text-3xl sm:text-7xl font-times font-thin">{seconds >= 0 ? String(Math.floor(time)).padStart(2, '0') : <br/>}</div>
 
-      <span className="mt-1 -mb-3 font-sans font-bold uppercase opacity-70 tracking-wider">{counterLabels[type]}</span>
+      <span className="mt-0.5 -mb-2 md:mt-1 md:-mb-3 font-sans text-xs md:text-base font-bold uppercase opacity-70 tracking-wider">{counterLabels[type]}</span>
     </div>
   )
 }

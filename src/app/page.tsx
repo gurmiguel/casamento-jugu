@@ -13,7 +13,7 @@ export default function Home() {
         <MainHero date={DATE} address={ADDRESS} />
       </Suspense>
 
-      <OrnamentDivider />
+      <AboutUs />
 
       <Suspense fallback={<CountdownFallback />}>
         <Countdown target={DATE}>
@@ -21,13 +21,17 @@ export default function Home() {
         </Countdown>
       </Suspense>
 
-      <AboutUs />
-
       <OrnamentDivider />
 
-      <div className="h-dvh bg-background">
+      {/* TODO: implement Location section with address and interactive Google Maps widget */}
 
-      </div>
+      {/* TODO: implement Gallery as mosaic */}
+
+      {/* TODO: implement RSVP section with CTA button */}
+
+      {/* TODO: implement Gift Registry */}
+
+      {/* TODO: implement Footer with copyright */}
     </div>
   )
 }

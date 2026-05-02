@@ -19,7 +19,7 @@ export const fontSerif = Alegreya_SC({
 export const fontSans = Alegreya_Sans({
   display: 'swap',
   variable: '--font-sans',
-  weight: ['100', '400', '500', '700'],
+  weight: ['100', '400', '500', '700', '900'],
   preload: true,
 })
 

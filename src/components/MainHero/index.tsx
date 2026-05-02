@@ -59,7 +59,7 @@ export function MainHero({ date, address }: Props) {
             <span className="font-calligraphy mr-4">& </span>
             Gustavo
           </H1>
-          <H4 className="flex flex-col gap-2">
+          <H4 className="flex flex-col gap-2 font-normal">
             <div>
               <CalendarIcon className="drop-shadow-xl mr-3" />
               {new Intl.DateTimeFormat('pt-BR', {

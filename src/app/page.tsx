@@ -2,8 +2,9 @@ import { Suspense } from 'react'
 import { AboutUs } from '~/components/AboutUs'
 import { Countdown, CountdownFallback } from '~/components/Countdown'
 import { AddToCalendar } from '~/components/Countdown/AddToCalendar'
+import { Location } from '~/components/Location'
 import { MainHero, MainHeroFallback } from '~/components/MainHero'
-import { OrnamentDivider } from '~/components/OrnamentDivider'
+import { OrnamentDivider } from '~/components/ui/OrnamentDivider'
 import { ADDRESS, DATE, DURATION_HOURS } from '~/config/data'
 
 export default function Home() {
@@ -23,7 +24,9 @@ export default function Home() {
 
       <OrnamentDivider />
 
-      {/* TODO: implement Location section with address and interactive Google Maps widget */}
+      <Location date={DATE} address={ADDRESS} />
+
+      <OrnamentDivider />
 
       {/* TODO: implement Gallery as mosaic */}
 

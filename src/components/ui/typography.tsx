@@ -1,13 +1,65 @@
-import { JSX } from 'react'
-import { cn } from '~/lib/ui'
+import { cva, VariantProps } from 'class-variance-authority'
+import { FunctionComponent, JSX } from 'react'
+import { twMerge } from '~/lib/ui'
 
-export const H1 = (props: JSX.IntrinsicElements['h1']) => <h1 {...props} className={cn('text-4xl leading-8 lg:text-6xl lg:leading-12 -tracking-wider', props.className)} />
-export const H2 = (props: JSX.IntrinsicElements['h2']) => (
-  <h2 {...props} className={cn('relative text-4xl font-medium tracking-tight', props.className)}>
-    {props.children}
-    <span className="absolute abs-center-x top-full mt-2 opacity-40 w-20 h-px bg-[currentColor]" />
-  </h2>
-)
-export const H3 = (props: JSX.IntrinsicElements['h3']) => <h3 {...props} className={cn('', props.className)} />
-export const H4 = (props: JSX.IntrinsicElements['h4']) => <h4 {...props} className={cn('text-xl lg:text-2xl leading-tight', props.className)} />
-export const P = (props: JSX.IntrinsicElements['p']) => <p {...props} className={cn('', props.className)} />
+const typographyVariants = cva('relative', {
+  variants: {
+    style: {
+      h1: 'text-4xl leading-8 lg:text-6xl lg:leading-12 -tracking-wider',
+      h2: 'text-3xl lg:text-4xl font-medium tracking-tight',
+      h3: 'text-2xl lg:text-3xl font-medium tracking-tight',
+      h4: 'text-xl lg:text-2xl leading-tight font-medium',
+      h5: 'text-lg lg:text-xl leading-tight font-medium',
+      h6: '',
+      p: '',
+      strong: 'font-semibold',
+      em: 'italic',
+      small: 'text-sm',
+      span: 'text-base',
+    },
+    underline: {
+      true: 'after:absolute after:abs-center-x after:top-full after:mt-2 after:opacity-40 after:w-20 after:h-px after:bg-[currentColor] after:content-[""]',
+    },
+  },
+  defaultVariants: {
+    style: 'span',
+    underline: false,
+  },
+})
+
+type TypographyVariants = VariantProps<typeof typographyVariants>
+type TypographyProps = TypographyVariants & JSX.IntrinsicElements['p'] & { as?: NonNullable<TypographyVariants['style']> }
+
+export const Typography = ({
+  style,
+  underline,
+  as: Component,
+  className,
+  ...props
+}: TypographyProps) => {
+  style ??= 'span'
+  Component ??= style
+  return (
+    <Component {...props} className={twMerge(typographyVariants({ style, underline, className, ...props }))} />
+  )
+}
+
+export const typography = (variants: TypographyVariants, className?: string) => twMerge(typographyVariants({ ...variants, className }))
+
+function withTypography(as: NonNullable<TypographyProps['as']>, defaultProps?: Partial<Omit<TypographyProps, 'as'>>) {
+  const Component: FunctionComponent<Omit<TypographyProps, 'as'>> = (props) => <Typography as={as} style={as} {...defaultProps} {...props} />
+
+  Component.displayName = as[0].toUpperCase() + as.slice(1)
+  return Component
+}
+
+export const H1 = withTypography('h1')
+export const H2 = withTypography('h2', { underline: true })
+export const H3 = withTypography('h3')
+export const H4 = withTypography('h4')
+export const H5 = withTypography('h5')
+export const P = withTypography('p')
+export const Strong = withTypography('strong')
+export const Em = withTypography('em')
+export const Small = withTypography('small')
+export const Span = withTypography('span')

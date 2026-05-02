@@ -25,10 +25,20 @@ export function CountdownBox({ type, seconds }: Props) {
   const time = counters[type](seconds)
 
   return (
-    <div className="flex-1 flex flex-col justify-center items-center rounded-3xl bg-secondary/10 border-2 border-muted-foreground/30 text-center aspect-square">
-      <div className="text-3xl sm:text-7xl font-times font-thin">{seconds >= 0 ? String(Math.floor(time)).padStart(2, '0') : <br/>}</div>
+    <div className="
+      flex aspect-square flex-1 flex-col items-center justify-center rounded-3xl
+      border-2 border-muted-foreground/30 bg-secondary/10 text-center
+    ">
+      <div className="
+        font-times text-3xl font-thin
+        sm:text-7xl
+      ">{seconds >= 0 ? String(Math.floor(time)).padStart(2, '0') : <br/>}</div>
 
-      <span className="mt-0.5 -mb-2 md:mt-1 md:-mb-3 font-sans text-xs md:text-base font-bold uppercase opacity-70 tracking-wider">{counterLabels[type]}</span>
+      <span className="
+        mt-0.5 -mb-2 font-sans text-xs font-bold tracking-wider uppercase
+        opacity-70
+        md:mt-1 md:-mb-3 md:text-base
+      ">{counterLabels[type]}</span>
     </div>
   )
 }

@@ -1,10 +1,22 @@
-import { defineConfig, globalIgnores } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
+import tailwindcss from 'eslint-plugin-better-tailwindcss'
+import { defineConfig, globalIgnores } from 'eslint/config'
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    ...tailwindcss.configs['recommended-warn'],
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: 'src/app/globals.css',
+      },
+    },
+    rules: {
+      'better-tailwindcss/no-unknown-classes': 'off',
+    },
+  },
   {
     rules: {
       'semi': ['warn', 'never'],

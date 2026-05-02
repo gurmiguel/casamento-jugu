@@ -5,11 +5,26 @@ import { twMerge } from '~/lib/ui'
 const typographyVariants = cva('relative', {
   variants: {
     style: {
-      h1: 'text-4xl leading-8 lg:text-6xl lg:leading-12 -tracking-wider',
-      h2: 'text-3xl lg:text-4xl font-medium tracking-tight',
-      h3: 'text-2xl lg:text-3xl font-medium tracking-tight',
-      h4: 'text-xl lg:text-2xl leading-tight font-medium',
-      h5: 'text-lg lg:text-xl leading-tight font-medium',
+      h1: `
+        text-4xl/8 -tracking-wider
+        lg:text-6xl/12
+      `,
+      h2: `
+        text-3xl font-medium tracking-tight
+        lg:text-4xl
+      `,
+      h3: `
+        text-2xl font-medium tracking-tight
+        lg:text-3xl
+      `,
+      h4: `
+        text-xl/tight font-medium
+        lg:text-2xl
+      `,
+      h5: `
+        text-lg/tight font-medium
+        lg:text-xl
+      `,
       h6: '',
       p: '',
       strong: 'font-semibold',
@@ -18,7 +33,10 @@ const typographyVariants = cva('relative', {
       span: 'text-base',
     },
     underline: {
-      true: 'after:absolute after:abs-center-x after:top-full after:mt-2 after:opacity-40 after:w-20 after:h-px after:bg-[currentColor] after:content-[""]',
+      true: `
+        after:absolute after:top-full after:abs-center-x after:mt-2 after:h-px
+        after:w-20 after:bg-[currentColor] after:opacity-40 after:content-[""]
+      `,
     },
   },
   defaultVariants: {

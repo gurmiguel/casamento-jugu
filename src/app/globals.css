@@ -4,6 +4,8 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant darkreader (&:where(html[data-darkreader-scheme="dark"] *));
+@custom-variant not-darkreader (&:where(html:not([data-darkreader-scheme="dark"]) *));
 
 @theme inline {
   --font-sans: var(--font-sans);

@@ -33,11 +33,20 @@ export function MainHero({ date, address }: Props) {
           width: isLarge ? `${500/7}%` : '100%',
         }}
       >
-        <Image src="/topo-default.jpg" loading="eager" alt="" fill className="saturate-120 blur-xs xl:blur-none bg-primary object-cover" />
-        <div className="absolute top-0 left-0 w-full h-full bg-black/35 mix-blend-darken"></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-orange-200 mix-blend-darken"></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-rose-200 mix-blend-darken"></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-black/40 mix-blend-darken lg:hidden"></div>
+        <Image src="/topo-default.jpg" loading="eager" alt="" fill className="saturate-120 blur-xs xl:blur-none darkreader:blur-none! bg-primary object-cover" />
+        <div className="darkreader:hidden">
+          <div className="absolute top-0 left-0 w-full h-full bg-black/35 mix-blend-darken"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-orange-200 mix-blend-darken"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-rose-200 mix-blend-darken"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-black/40 mix-blend-darken lg:hidden"></div>
+        </div>
+        {/* support darkreader extension */}
+        <div className="not-darkreader:hidden opacity-60">
+          <div className="absolute top-0 left-0 w-full h-full bg-black/85 mix-blend-darken"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-orange-200/10 mix-blend-darken"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-rose-200/10 mix-blend-darken"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-black/40 mix-blend-darken lg:hidden"></div>
+        </div>
       </div>
       <div
         className="flex flex-col lg:flex-row mr-0 ml-auto items-center justify-start gap-4 lg:gap-16 px-4"

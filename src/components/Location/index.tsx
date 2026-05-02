@@ -86,10 +86,11 @@ export function Location({ date, address }: Props) {
             </li>
           </ul>
         </div>
-        <div className="
+        <div id="map" className="
           aspect-square flex-1 overflow-hidden rounded-4xl border-2
           border-secondary/20
           lg:flex-1/2
+          max-sm:-mx-8 max-sm:rounded-none max-sm:border-none
         ">
           <iframe
             src={`https://maps.google.com/maps?q=${encodeURIComponent(

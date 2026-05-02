@@ -10,6 +10,7 @@ import { screens } from '~/config/theme'
 import { H1, H4 } from '~/components/ui/typography'
 import { IAddress } from '~/config/types'
 import { formatAddress } from '~/lib/address'
+import { MouseEvent } from 'react'
 
 const IMAGE_SIZE = {
   large: 480,
@@ -24,6 +25,18 @@ interface Props {
 export function MainHero({ date, address }: Props) {
   const isLarge = useMediaQuery(`only screen and (min-width: ${screens.lg}px)`, { defaultValue: true, initializeWithValue: false })
   const isSmallHeight = useMediaQuery('only screen and (max-height: 520px)', { defaultValue: false, initializeWithValue: false })
+
+  function handleAddressClick(e: MouseEvent) {
+    e.preventDefault()
+    const target = e.currentTarget.getAttribute('href')
+    if (!target) return
+
+    const element = document.querySelector(target)
+    element?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    })
+  }
 
   return (
     <div className="
@@ -122,7 +135,7 @@ export function MainHero({ date, address }: Props) {
                 dateStyle: 'long',
               }).format(date)}
             </div>
-            <a href={address.url} target="_blank" className="group flex" rel="noreferrer">
+            <a href="#map"className="group flex" onClick={handleAddressClick}>
               <MapPinIcon className="mt-1 mr-3 drop-shadow-xl" />
               <div>
                 <span className="

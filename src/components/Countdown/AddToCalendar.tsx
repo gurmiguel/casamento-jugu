@@ -39,20 +39,18 @@ export function AddToCalendar({ datetime, durationInHours, address }: Props) {
         '--list-background: var(--primary)',
         '--list-hover-background: color-mix(in srgb, var(--primary), #000 10%)',
       ].join(';'),
-      customCss: './add-to-calendar.custom.css',
+      customCss: new URL('./add-to-calendar.custom.css', import.meta.url).href,
       buttonStyle: 'custom',
       customLabels: {
         google: 'Google (Gmail)',
         outlookcom: 'Outlook',
       },
+      hideBranding: true,
     }, e.currentTarget)
   }
 
   return (
-    <Button variant="outline" size="lg" className="
-      cursor-pointer rounded-full text-sm font-medium
-      sm:text-xl
-    " onClick={handleAddToCalendar}>
+    <Button variant="outline" size="lg" className="cursor-pointer rounded-full text-sm font-medium sm:text-xl" onClick={handleAddToCalendar}>
       <CalendarPlus /> Adicione ao Calendário
     </Button>
   )

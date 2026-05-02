@@ -2,6 +2,7 @@ import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
 import tailwindcss from 'eslint-plugin-better-tailwindcss'
 import { defineConfig, globalIgnores } from 'eslint/config'
+import classNamesPreferTemplate from './src/lib/eslint/classnames-prefer-template'
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -15,6 +16,20 @@ const eslintConfig = defineConfig([
     },
     rules: {
       'better-tailwindcss/no-unknown-classes': 'off',
+      'better-tailwindcss/enforce-consistent-variant-order': ['warn'],
+      'better-tailwindcss/enforce-consistent-line-wrapping': ['warn', {
+        printWidth: 0,
+        classesPerLine: 5,
+        preferSingleLine: true,
+      }],
+    },
+  },
+  {
+    plugins: {
+      'classnames-prefer-template': classNamesPreferTemplate,
+    },
+    rules: {
+      'classnames-prefer-template/multiline-classname': ['error'],
     },
   },
   {

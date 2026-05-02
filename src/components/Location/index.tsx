@@ -11,37 +11,26 @@ interface Props {
 export function Location({ date, address }: Props) {
   return (
     <div className="px-6">
-      <div className="
+      <div className={`
         container mx-auto flex flex-col gap-8
         lg:flex-row lg:gap-16
-      ">
-        <div className="
-          flex flex-1 flex-col justify-center rounded-4xl border-2
-          border-secondary/20 bg-card px-8 py-16
+      `}>
+        <div className={`
+          flex flex-1 flex-col justify-center rounded-4xl
+          border-2 border-secondary/20 bg-card px-8 py-16
           md:px-16
           lg:aspect-square lg:flex-1/2
-        ">
+        `}>
           <div>
             <H5 className="mb-2 text-secondary">A Celebração</H5>
-            <H2 className="
-              mb-8 inline-block font-normal
-              sm:mb-16
-            " underline={false}>O Grande Dia</H2>
+            <H2 className="mb-8 inline-block font-normal sm:mb-16" underline={false}>O Grande Dia</H2>
           </div>
 
-          <ul className="
-            grid grid-cols-4 items-center gap-12
-            sm:grid-cols-7
-          ">
+          <ul className="grid grid-cols-4 items-center gap-12 sm:grid-cols-7">
             <li className="contents">
               <CalendarIcon className="size-12 text-secondary" />
-              <div className="
-                col-start-2 col-end-5 flex flex-col
-                sm:col-end-8
-              ">
-                <Strong style="h5" className="
-                  mb-2 font-sans font-bold text-secondary uppercase
-                ">Quando</Strong>
+              <div className="col-start-2 col-end-5 flex flex-col sm:col-end-8">
+                <Strong style="h5" className="mb-2 font-sans font-bold text-secondary uppercase">Quando</Strong>
                 <Span style="h3" className="font-normal">{Intl.DateTimeFormat('pt-BR', {
                   weekday: 'long',
                   day: '2-digit',
@@ -59,13 +48,8 @@ export function Location({ date, address }: Props) {
             </li>
             <li className="contents">
               <MapPinIcon className="size-12 text-secondary" />
-              <div className="
-                col-start-2 col-end-5 flex flex-col
-                sm:col-end-8
-              ">
-                <Strong style="h5" className="
-                  mb-2 font-sans font-bold text-secondary uppercase
-                ">Onde</Strong>
+              <div className="col-start-2 col-end-5 flex flex-col sm:col-end-8">
+                <Strong style="h5" className="mb-2 font-sans font-bold text-secondary uppercase">Onde</Strong>
                 <Span style="h3" className="font-normal">{formatAddress(address, 'minimal')}</Span>
                 <Span style="h4" className="font-normal">
                   {address.city}, {address.state}
@@ -74,24 +58,19 @@ export function Location({ date, address }: Props) {
             </li>
             <li className="contents">
               <SparkleIcon className="size-12 text-secondary" />
-              <div className="
-                col-start-2 col-end-5 flex flex-col
-                sm:col-end-8
-              ">
-                <Strong style="h5" className="
-                  mb-2 font-sans font-bold text-secondary uppercase
-                ">Dicas</Strong>
+              <div className="col-start-2 col-end-5 flex flex-col sm:col-end-8">
+                <Strong style="h5" className="mb-2 font-sans font-bold text-secondary uppercase">Dicas</Strong>
                 <Span style="h4" className="leading-none font-normal">Vestimenta social, fresca e confortável. <small>Mulheres, evitem saltos muito finos.</small></Span>
               </div>
             </li>
           </ul>
         </div>
-        <div id="map" className="
+        <div id="map" className={`
           aspect-square flex-1 overflow-hidden rounded-4xl border-2
           border-secondary/20
           lg:flex-1/2
           max-sm:-mx-8 max-sm:rounded-none max-sm:border-none
-        ">
+        `}>
           <iframe
             src={`https://maps.google.com/maps?q=${encodeURIComponent(
               `${address.label ? address.label + ', ' : ''}${formatAddress(address, 'full')}`,

@@ -50,7 +50,7 @@ export function AddToCalendar({ datetime, durationInHours, address }: Props) {
   }
 
   return (
-    <Button variant="outline" size="lg" className="cursor-pointer rounded-full text-sm font-medium sm:text-xl" onClick={handleAddToCalendar}>
+    <Button variant="outline" size="lg" className="rounded-full text-sm font-medium sm:text-xl" onClick={handleAddToCalendar}>
       <CalendarPlus /> Adicione ao Calendário
     </Button>
   )

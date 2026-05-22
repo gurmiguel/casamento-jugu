@@ -30,16 +30,16 @@ export function Location({ date, address }: Props) {
             <li className="contents">
               <CalendarIcon className="size-12 text-secondary" />
               <div className="col-start-2 col-end-5 flex flex-col sm:col-end-8">
-                <Strong style="h5" className="mb-2 font-sans font-bold text-secondary uppercase">Quando</Strong>
-                <Span style="h3" className="font-normal">{Intl.DateTimeFormat('pt-BR', {
+                <Strong variant="h5" className="mb-2 font-sans font-bold text-secondary uppercase">Quando</Strong>
+                <Span variant="h3" className="font-normal">{Intl.DateTimeFormat('pt-BR', {
                   weekday: 'long',
                   day: '2-digit',
                   month: 'long',
                   year: 'numeric',
                 }).format(date)}</Span>
-                <Span style="h4" className="font-normal">
+                <Span variant="h4" className="font-normal">
                   Início da cerimônia às{' '}
-                  <Strong style="h3" className="-my-2 inline-block">{Intl.DateTimeFormat('pt-BR', {
+                  <Strong variant="h3" className="-my-2 inline-block">{Intl.DateTimeFormat('pt-BR', {
                     hour: '2-digit',
                     minute: '2-digit',
                   }).format(date)}</Strong>
@@ -49,9 +49,9 @@ export function Location({ date, address }: Props) {
             <li className="contents">
               <MapPinIcon className="size-12 text-secondary" />
               <div className="col-start-2 col-end-5 flex flex-col sm:col-end-8">
-                <Strong style="h5" className="mb-2 font-sans font-bold text-secondary uppercase">Onde</Strong>
-                <Span style="h3" className="font-normal">{formatAddress(address, 'minimal')}</Span>
-                <Span style="h4" className="font-normal">
+                <Strong variant="h5" className="mb-2 font-sans font-bold text-secondary uppercase">Onde</Strong>
+                <Span variant="h3" className="font-normal">{formatAddress(address, 'minimal')}</Span>
+                <Span variant="h4" className="font-normal">
                   {address.city}, {address.state}
                 </Span>
               </div>
@@ -59,8 +59,8 @@ export function Location({ date, address }: Props) {
             <li className="contents">
               <SparkleIcon className="size-12 text-secondary" />
               <div className="col-start-2 col-end-5 flex flex-col sm:col-end-8">
-                <Strong style="h5" className="mb-2 font-sans font-bold text-secondary uppercase">Dicas</Strong>
-                <Span style="h4" className="leading-none font-normal">Vestimenta social, fresca e confortável. <small>Mulheres, evitem saltos muito finos.</small></Span>
+                <Strong variant="h5" className="mb-2 font-sans font-bold text-secondary uppercase">Dicas</Strong>
+                <Span variant="h4" className="leading-none font-normal">Vestimenta social, fresca e confortável. <small>Mulheres, evitem saltos muito finos.</small></Span>
               </div>
             </li>
           </ul>

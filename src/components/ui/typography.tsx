@@ -4,12 +4,12 @@ import { twMerge } from '~/lib/ui'
 
 const typographyVariants = cva('relative', {
   variants: {
-    style: {
+    variant: {
       h1: 'text-4xl/8 -tracking-wider lg:text-6xl/12',
       h2: 'text-3xl font-medium tracking-tight lg:text-4xl',
       h3: 'text-2xl font-medium tracking-tight lg:text-3xl',
       h4: 'text-xl/tight font-medium lg:text-2xl',
-      h5: 'text-lg/tight font-medium lg:text-xl',
+      h5: 'text-lg/tight font-medium lg:text-xl leading-none',
       h6: '',
       p: '',
       strong: 'font-semibold',
@@ -25,32 +25,35 @@ const typographyVariants = cva('relative', {
     },
   },
   defaultVariants: {
-    style: 'span',
+    variant: 'span',
     underline: false,
   },
 })
 
 type TypographyVariants = VariantProps<typeof typographyVariants>
-type TypographyProps = TypographyVariants & JSX.IntrinsicElements['p'] & { as?: NonNullable<TypographyVariants['style']> }
+type TypographyProps = TypographyVariants & JSX.IntrinsicElements['p'] & { as?: NonNullable<TypographyVariants['variant']> | keyof JSX.IntrinsicElements }
+
+type Variants = NonNullable<TypographyProps['variant']>
 
 export const Typography = ({
-  style,
+  variant,
   underline,
-  as: Component,
+  as,
   className,
   ...props
 }: TypographyProps) => {
-  style ??= 'span'
-  Component ??= style
+  variant ??= 'span'
+  let Component = as as Variants
+  Component ??= variant
   return (
-    <Component {...props} className={twMerge(typographyVariants({ style, underline, className, ...props }))} />
+    <Component {...props} className={twMerge(typographyVariants({ variant, underline, className, ...props }))} />
   )
 }
 
 export const typography = (variants: TypographyVariants, className?: string) => twMerge(typographyVariants({ ...variants, className }))
 
-function withTypography(as: NonNullable<TypographyProps['as']>, defaultProps?: Partial<Omit<TypographyProps, 'as'>>) {
-  const Component: FunctionComponent<Omit<TypographyProps, 'as'>> = (props) => <Typography as={as} style={as} {...defaultProps} {...props} />
+function withTypography(as: Variants, defaultProps?: Partial<TypographyProps>) {
+  const Component: FunctionComponent<TypographyProps> = (props) => <Typography as={as as Variants} variant={as as Variants} {...defaultProps} {...props} />
 
   Component.displayName = as[0].toUpperCase() + as.slice(1)
   return Component

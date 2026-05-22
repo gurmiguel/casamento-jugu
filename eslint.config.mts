@@ -60,6 +60,11 @@ const eslintConfig = defineConfig([
       'quote-props': ['error', 'consistent-as-needed', {
         numbers: true,
       }],
+      '@typescript-eslint/no-unused-vars': ['warn', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+      }],
     },
   },
   // Override default ignores of eslint-config-next.

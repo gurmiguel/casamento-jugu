@@ -1,3 +1,4 @@
+import { type JSX } from 'react'
 import { Button as ButtonPrimitive } from '@base-ui/react/button'
 import { cva, type VariantProps } from 'class-variance-authority'
 
@@ -74,10 +75,11 @@ function Button({
   type = 'button',
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  const hasButtonHandler = !!props.onClick || (!!props.render && !!(props as JSX.IntrinsicElements['a']).href)
   return (
     <ButtonPrimitive
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(buttonVariants({ variant, size, className }), hasButtonHandler && 'cursor-pointer')}
       type={type}
       {...props}
     />

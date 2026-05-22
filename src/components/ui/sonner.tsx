@@ -27,8 +27,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       style={
         {
-          '--normal-bg': 'var(--popover)',
-          '--normal-text': 'var(--popover-foreground)',
+          '--normal-bg': 'var(--primary)',
+          '--normal-text': 'var(--primary-foreground)',
           '--normal-border': 'var(--border)',
           '--border-radius': 'var(--radius)',
         } as React.CSSProperties
@@ -36,6 +36,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast: 'cn-toast',
+          closeButton: '[&>svg]:text-primary-foreground hover:bg-secondary!',
         },
       }}
       {...props}

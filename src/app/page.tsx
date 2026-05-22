@@ -2,12 +2,16 @@ import { Suspense } from 'react'
 import { AboutUs } from '~/components/AboutUs'
 import { Countdown, CountdownFallback } from '~/components/Countdown'
 import { AddToCalendar } from '~/components/Countdown/AddToCalendar'
+import { Gallery, GalleryFallback } from '~/components/Gallery'
 import { Location } from '~/components/Location'
 import { MainHero, MainHeroFallback } from '~/components/MainHero'
-import { OrnamentDivider } from '~/components/ui/OrnamentDivider'
+import { OrnamentDivider } from '~/components/ui/ornament-divider'
 import { ADDRESS, DATE, DURATION_HOURS } from '~/config/data'
+import { getGalleryImages } from '~/server-only/dal/gallery'
 
-export default function Home() {
+export default async function Home() {
+  const images = getGalleryImages()
+
   return (
     <div className="main">
       <Suspense fallback={<MainHeroFallback />}>
@@ -22,13 +26,13 @@ export default function Home() {
         </Countdown>
       </Suspense>
 
-      <OrnamentDivider />
+      <OrnamentDivider className="mt-8" />
 
       <Location date={DATE} address={ADDRESS} />
 
-      <OrnamentDivider />
-
-      {/* TODO: implement Gallery as mosaic */}
+      <Suspense fallback={<GalleryFallback />}>
+        <Gallery images={images} />
+      </Suspense>
 
       {/* TODO: implement RSVP section with CTA button */}
 

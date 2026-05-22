@@ -10,13 +10,14 @@ interface Props {
 
 export function Location({ date, address }: Props) {
   return (
-    <div className="px-6">
+    <div className="px-6 w-full my-8 max-sm:px-0">
       <div className={`
         container mx-auto flex flex-col gap-8
         lg:flex-row lg:gap-16
       `}>
         <div className={`
-          flex flex-1 flex-col justify-center rounded-4xl
+          flex flex-1 flex-col justify-center
+          md:rounded-4xl
           border-2 border-secondary/20 bg-card px-8 py-16
           md:px-16
           lg:aspect-square lg:flex-1/2
@@ -69,7 +70,8 @@ export function Location({ date, address }: Props) {
           aspect-square flex-1 overflow-hidden rounded-4xl border-2
           border-secondary/20
           lg:flex-1/2
-          max-sm:-mx-8 max-sm:rounded-none max-sm:border-none
+          max-w-full
+          max-sm:rounded-none max-sm:border-none
         `}>
           <iframe
             src={`https://maps.google.com/maps?q=${encodeURIComponent(

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "../config/theme";
+@import "../../node_modules/vanilla-infinite-marquee/infinite-marquee.css";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 

@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "vanilla-infinite-marquee/types": ["./node_modules/vanilla-infinite-marquee/types/infinite-marquee.d.ts"]
     }
   },
   "include": [

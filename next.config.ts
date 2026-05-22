@@ -19,6 +19,9 @@ const nextConfig: NextConfig = {
       expire: 24 * 60 * 60, // 1 day
     },
   },
+  images: {
+    remotePatterns: [new URL('https://res.cloudinary.com/**')],
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: '3mb',

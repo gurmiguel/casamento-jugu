@@ -2,7 +2,7 @@
 
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
-import { JSX, useEffect, useEffectEvent, useLayoutEffect, useState } from 'react'
+import { JSX, useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from 'react'
 import { cn } from '~/lib/ui'
 
 type Props = Omit<JSX.IntrinsicElements['img'], 'src' | 'onLoad' | 'onError'> & {
@@ -15,7 +15,8 @@ type Props = Omit<JSX.IntrinsicElements['img'], 'src' | 'onLoad' | 'onError'> & 
 
 const FALLBACK_PIXEL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
 
-export function PreloadedImage({ src, onLoad, onError, decoding, fallback, className, ...props }: Props) {
+export function PreloadedImage({ src, onLoad, onError, decoding, fallback, className, loading = 'eager', ...props }: Props) {
+  const imgRef = useRef<HTMLImageElement>(null)
   const [loadedSrc, setLoadedSrc] = useState<string>()
 
   const handleImageLoadEvent = useEffectEvent((src: string) => {
@@ -33,7 +34,21 @@ export function PreloadedImage({ src, onLoad, onError, decoding, fallback, class
     image.onerror = (event) => {
       onError?.(event)
     }
-    image.src = src
+    if (loading === 'eager')
+      image.src = src
+    else {
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          image.src = src
+          observer.disconnect()
+        }
+      }, {
+        rootMargin: '200px 0px',
+        threshold: 0.1,
+      })
+      observer.observe(imgRef.current!)
+      return () => observer.disconnect()
+    }
   })
 
   useLayoutEffect(() => handleImageLoadEvent(src), [src])
@@ -49,7 +64,7 @@ export function PreloadedImage({ src, onLoad, onError, decoding, fallback, class
   return (
     <>
       {!loadedSrc && fallback}
-      <img src={loadedSrc ?? FALLBACK_PIXEL} {...props} className={cn(!loadedSrc && fallback && 'invisible', className)} />
+      <img ref={imgRef} src={loadedSrc ?? FALLBACK_PIXEL} {...props} className={cn(!loadedSrc && fallback && 'invisible', className)} />
     </>
   )
 }

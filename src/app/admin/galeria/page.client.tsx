@@ -27,7 +27,7 @@ export default function GalleryPageComponent({ storedImages }: Props) {
 
   const photos = selectedPhotos ?? storedImages
 
-  const showStoredImages = selectedPhotos === null && storedImages.length > 0
+  const showStoredImages = pickerSession === null && selectedPhotos === null && storedImages.length > 0
 
   const downloadedCount = selectedPhotos?.filter(p => p.downloaded).length ?? 0
   const hasFinishedSelection = (selectedPhotos?.length ?? 0) > 0
@@ -200,18 +200,22 @@ export default function GalleryPageComponent({ storedImages }: Props) {
 
       await Promise.allSettled(tasks)
 
-      await saveUploadedImages(uploadedPhotos.map(x => ({
-        id: x.public_id,
-        path: x.secure_url,
-      })))
+      if (uploadedPhotos.length > 0) {
+        await saveUploadedImages(uploadedPhotos.map(x => ({
+          id: x.public_id,
+          path: x.secure_url,
+        })))
+
+        setTimeout(() => {
+          setPickerSession(null)
+          setSelectedPhotos(null)
+          setUploadedCount(0)
+        }, 500)
+      }
 
       const failedCount = selectedPhotos.length - uploadedPhotos.length
       if (failedCount > 0)
         toast.warning(`Não foi possível fazer o upload de ${failedCount} fotos.`)
-
-      setPickerSession(null)
-      setSelectedPhotos(null)
-      setUploadedCount(0)
     })
   }
 
@@ -224,6 +228,7 @@ export default function GalleryPageComponent({ storedImages }: Props) {
 
     if (pendingRemovalsRef.current.size === 0) {
       await refreshImages()
+      toast.success('Fotos removidas com sucesso!')
     }
   }
 

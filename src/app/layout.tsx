@@ -1,9 +1,12 @@
+import './globals.css'
+
 import type { Metadata } from 'next'
 import { fontCalligraphy, fontSans, fontSerif } from '~/config/theme'
-import './globals.css'
+import { NavigationGuardProvider } from 'next-navigation-guard'
 import ReactDOM from 'react-dom'
 import { Toaster } from '~/components/ui/sonner'
 import { DialogProvider } from '~/components/Dialog/context'
+import { TooltipProvider } from '~/components/ui/tooltip'
 
 export const metadata: Metadata = {
   title: 'Casamento - Juliana e Gustavo',
@@ -24,10 +27,14 @@ export default function RootLayout({
     `}>
       <PreloadResources />
       <body>
-        <DialogProvider>
-          {children}
-        </DialogProvider>
-        <Toaster closeButton />
+        <NavigationGuardProvider>
+          <TooltipProvider>
+            <DialogProvider>
+              {children}
+            </DialogProvider>
+          </TooltipProvider>
+          <Toaster closeButton />
+        </NavigationGuardProvider>
       </body>
     </html>
   )

@@ -9,9 +9,12 @@ import { createHandle, DialogClose, DialogContent, DialogDescription, DialogFoot
 import { PreloadedImage } from '~/components/ui/preloaded-image'
 import { H4 } from '~/components/ui/typography'
 import { removeImage } from '../actions'
+import { Checkbox } from '~/components/ui/checkbox'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 
 export type SelectedPhoto = google.PickerMediaItem & {
   downloaded?: { url: string, blob: Blob } | Error
+  checked: boolean
 }
 
 type UploadedPhoto = {
@@ -25,9 +28,10 @@ type PickerPhoto = SelectedPhoto | UploadedPhoto
 interface Props {
   photo: PickerPhoto
   onRemove(id: number, onFinish: ()=> Promise<void>): void
+  onToggle(id: string, checked: boolean): void
 }
 
-export function GalleryImage({ photo, onRemove }: Props) {
+export function GalleryImage({ photo, onRemove, onToggle }: Props) {
   const dialog = useDialog()
 
   const [isDeleting, setIsDeleting] = useState(false)
@@ -83,20 +87,42 @@ export function GalleryImage({ photo, onRemove }: Props) {
   }
 
   if (selectedPhoto?.downloaded instanceof Error)
-    return <BanIcon className="size-14" />
+    return (
+      <Tooltip>
+        <TooltipTrigger render={<div className={`
+          w-60 h-80 bg-muted flex items-center
+          justify-center border-border
+        `}>
+          <BanIcon className="size-14" />
+        </div>} />
+        <TooltipContent>Não foi possível carregar a imagem</TooltipContent>
+      </Tooltip>
+    )
 
   return (
     <div className="relative">
       <PreloadedImage src={url} alt={filename ?? ''}
         loading="lazy"
         data-removing={isDeleting}
-        className="object-cover h-80 transition-all data-[removing=true]:grayscale-75 data-[removing=true]:scale-95"
+        className={`
+          object-cover h-50
+          sm:h-80
+          transition-all
+          data-[removing=true]:grayscale-75 data-[removing=true]:scale-95
+          select-none
+        `}
         onLoad={() => setState('loaded')}
       />
+      {state === 'loaded' && selectedPhoto && (
+        <Checkbox defaultChecked
+          className="absolute top-0 right-0 m-2"
+          onCheckedChange={(checked) => onToggle(selectedPhoto.id, checked)}
+        />
+      )}
       {state === 'loaded' && uploadedPhoto && (
         <Button variant="ghost"
           size="icon-sm"
-          className={'absolute rounded-full top-0 right-0'}
+          className="absolute rounded-full top-0 right-0"
           onClick={() => handleRemovePhoto()}
           disabled={isDeleting}
         >{isDeleting

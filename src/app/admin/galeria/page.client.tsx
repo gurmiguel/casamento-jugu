@@ -12,6 +12,8 @@ import { useAuth } from '~/contexts/auth/auth.context'
 import { useLocalStorage } from '~/hooks/use-local-storage'
 import { getImageUploadSignedUrl, refreshImages, saveUploadedImages } from './actions'
 import { GalleryImage, SelectedPhoto } from './components/gallery-image'
+import { useNavigationGuard } from 'next-navigation-guard'
+import QRCode from 'react-qr-code'
 
 interface Props {
   storedImages: { id: number, providerId: string | null, path: string }[]
@@ -25,6 +27,8 @@ export default function GalleryPageComponent({ storedImages }: Props) {
   const [isSubmitting, startSubmission] = useTransition()
   const [uploadedCount, setUploadedCount] = useState(0)
 
+  const pickerUrl = `${pickerSession?.pickerUri}/autoclose`
+
   const photos = selectedPhotos ?? storedImages
 
   const showStoredImages = pickerSession === null && selectedPhotos === null && storedImages.length > 0
@@ -32,6 +36,11 @@ export default function GalleryPageComponent({ storedImages }: Props) {
   const downloadedCount = selectedPhotos?.filter(p => p.downloaded).length ?? 0
   const hasFinishedSelection = (selectedPhotos?.length ?? 0) > 0
   const hasFinishedDownloading = downloadedCount === selectedPhotos?.length
+
+  useNavigationGuard({
+    enabled: !!selectedPhotos?.filter(it => it.checked && !!it.downloaded).length,
+    confirm: () => window.confirm('As fotos selecionadas serão perdidas. Deseja continuar?'),
+  })
 
   useEffect(() => {
     // expire pickerSession
@@ -66,7 +75,7 @@ export default function GalleryPageComponent({ storedImages }: Props) {
         },
       }).then(res => res.json())
 
-      setSelectedPhotos(resources.mediaItems)
+      setSelectedPhotos(resources.mediaItems.map(it => ({ ...it, checked: true })))
       setPickerSession(null)
 
       resources.mediaItems.forEach(async (item) => {
@@ -162,7 +171,7 @@ export default function GalleryPageComponent({ storedImages }: Props) {
     if (isSessionExpired(pickerSession))
       return setPickerSession(null)
 
-    window.open(pickerSession!.pickerUri + '/autoclose', '_blank')
+    window.open(pickerUrl, '_blank')
   }
 
   async function handleSubmitPhotos() {
@@ -172,9 +181,13 @@ export default function GalleryPageComponent({ storedImages }: Props) {
       const { url, signature, timestamp, apiKey } = await getImageUploadSignedUrl({ folder: 'casamento-jugu/galeria' })
       const uploadedPhotos = new Array<UploadResponse>()
 
+      let targetUploadCount = 0
+
       const tasks = new Array<Promise<void>>()
       for (const photo of selectedPhotos) {
         if (!photo.downloaded) continue
+        if (!photo.checked) continue
+        targetUploadCount += 0
         if (photo.downloaded instanceof Error) continue
 
         const { blob } = photo.downloaded
@@ -213,7 +226,7 @@ export default function GalleryPageComponent({ storedImages }: Props) {
         }, 500)
       }
 
-      const failedCount = selectedPhotos.length - uploadedPhotos.length
+      const failedCount = targetUploadCount - uploadedPhotos.length
       if (failedCount > 0)
         toast.warning(`Não foi possível fazer o upload de ${failedCount} fotos.`)
     })
@@ -232,16 +245,34 @@ export default function GalleryPageComponent({ storedImages }: Props) {
     }
   }
 
+  function handleToggleSelectedPhoto(id: string, checked: boolean) {
+    setSelectedPhotos(prev => {
+      prev ??= []
+      const idx = prev.findIndex(p => p.id === id)
+      if (idx === -1) return prev
+      prev[idx].checked = checked
+      return [...prev]
+    })
+  }
+
   return (
     <div className="flex flex-col items-center flex-1 pt-8">
       <div className="flex flex-col items-center justify-center mt-4">
         <H4 className="font-normal mb-4">Autenticado como <Strong>{auth.displayName}</Strong></H4>
 
         {pickerSession === null && !isStartingSession && (
-          <Button onClick={handlePickerInit}
-            className="[data-hidden]:invisible"
-            data-hidden={!hasFinishedDownloading}
-          >Selecionar {(hasFinishedSelection || showStoredImages) ? 'novas' : ''} fotos</Button>
+          <div className="flex max-sm:flex-col gap-1 sm:gap-4">
+            <Button onClick={handlePickerInit}
+              className="[data-hidden]:invisible"
+              data-hidden={!hasFinishedDownloading}
+            >Selecionar {(hasFinishedSelection || showStoredImages) ? 'novas' : ''} fotos</Button>
+
+            {!!storedImages.length && selectedPhotos?.length && (
+              <Button variant="outline" onClick={() => location.reload()}>
+                Manter seleção anterior
+              </Button>
+            )}
+          </div>
         )}
         {isStartingSession && <Button disabled>Aguarde um instante...</Button>}
       </div>
@@ -252,19 +283,30 @@ export default function GalleryPageComponent({ storedImages }: Props) {
 
           <Button className="mt-4" onClick={handleCancelSession}>Cancelar a sessão</Button>
 
-          <div className="flex flex-1 text-center my-8 gap-8">
+          <div className={`
+            flex flex-1
+            max-sm:flex-col-reverse
+            text-center my-8
+            sm:gap-8
+          `}>
             <div className={`
-              flex-1/2 flex justify-center items-center aspect-square
-              border rounded-2xl
+              flex-1/2 flex flex-col justify-center items-center
+              aspect-square border
+              sm:rounded-2xl
             `}>
-              <H5>Acesse com o celular scaneando o QR Code abaixo</H5>
+              <H5>Acesse com outro dispositivo scaneando o <Strong className="text-nowrap uppercase">QR Code</Strong> abaixo</H5>
+
+              <div className="mt-4">
+                <QRCode value={pickerUrl} level="L" bgColor="var(--background)" />
+              </div>
             </div>
             <div className={`
               flex-1/2 flex flex-col justify-center items-center
-              aspect-square border rounded-2xl
+              aspect-square border
+              sm:rounded-2xl
             `}>
-              <H5 className="mb-4">Ou clique no botão para adicionar fotos pelo computador</H5>
-              <Button onClick={handleOpenPickerWindow}>Adicionar fotos</Button>
+              <H5 className="mb-4">Clique no botão para selecionar as fotos no <Strong className="text-nowrap">Google Photos</Strong></H5>
+              <Button onClick={handleOpenPickerWindow}>Selecionar fotos</Button>
             </div>
           </div>
         </>
@@ -273,8 +315,9 @@ export default function GalleryPageComponent({ storedImages }: Props) {
       {(hasFinishedSelection || showStoredImages) && (
         <div className="container mx-auto my-8">
           <div className={`
-            flex flex-row flex-wrap gap-2 p-2
-            justify-center
+            flex flex-row flex-wrap gap-1
+            sm:gap-2
+            p-2 justify-center
           `}>
             {!hasFinishedDownloading && !showStoredImages && (
               <div className={`
@@ -294,7 +337,7 @@ export default function GalleryPageComponent({ storedImages }: Props) {
             )}
             {(hasFinishedDownloading || showStoredImages) && (
               <>
-                {photos.map(photo => <GalleryImage key={photo.id} photo={photo} onRemove={handleRemoveImage} />)}
+                {photos.map(photo => <GalleryImage key={photo.id} photo={photo} onRemove={handleRemoveImage} onToggle={handleToggleSelectedPhoto} />)}
 
                 {!showStoredImages && (
                   <div className={`

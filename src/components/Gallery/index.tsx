@@ -19,8 +19,10 @@ interface Props {
   images: Promise<ImageItem[]>
 }
 
+const GALLERY_ROWS = 3
+
 export function Gallery({ images: useImages }: Props) {
-  const images = chunkArray(use(useImages), 3)
+  const images = chunkArray(use(useImages), GALLERY_ROWS)
 
   const [velocity, setVelocity] = useState(1)
 
@@ -33,7 +35,7 @@ export function Gallery({ images: useImages }: Props) {
     <>
       <OrnamentDivider />
 
-      <div className="overflow-hidden text-center">
+      <div className="overflow-hidden text-center mt-6">
         <div className="px-6">
           <div className="container mx-auto">
             <H2 className="mb-6">Galeria</H2>
@@ -57,7 +59,7 @@ export function Gallery({ images: useImages }: Props) {
               pointer-events-none
             `}>
               {images.map((row, i) => (
-                <GalleryRow key={i} images={row} velocity={velocity} />
+                <GalleryRow key={i} images={row} velocity={velocity} rows={GALLERY_ROWS} />
               ))}
             </div>
           )}
@@ -70,9 +72,10 @@ export function Gallery({ images: useImages }: Props) {
 interface RowProps {
   images: ImageItem[]
   velocity: number
+  rows: number
 }
 
-function GalleryRow({ images, velocity }: RowProps) {
+function GalleryRow({ images, velocity, rows }: RowProps) {
   const imagesLoadedCount = useRef(0)
   const isLarge = useMediaQuery(`only screen and (min-width: ${screens.lg+1}px)`, { defaultValue: false, initializeWithValue: false })
   const isHandheld = useMediaQuery(`only screen and (max-width: ${screens.sm}px)`, { defaultValue: false, initializeWithValue: false })
@@ -105,9 +108,12 @@ function GalleryRow({ images, velocity }: RowProps) {
       >
         {images.map(img => (
           <PreloadedImage key={img.id} src={img.path} alt=""
-            className="min-h-48 h-[24dvh] w-auto max-w-none select-none"
+            className="min-h-48 w-auto max-w-none select-none"
             onLoad={onImageLoad}
             onError={onImageLoad}
+            style={{
+              height: `calc(${100 / rows}dvh - ${7.75/(rows-1)}rem)`,
+            }}
           />
         ))}
       </Marquee>

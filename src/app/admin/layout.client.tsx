@@ -5,6 +5,7 @@ import { PropsWithChildren, useMemo, useState, useSyncExternalStore } from 'reac
 import { Button } from '~/components/ui/button'
 import { decodeSnapshot, getSnapshot, setAuth, subscribe } from './utils'
 import { AuthProvider } from '~/contexts/auth/auth.context'
+import Link from 'next/link'
 
 export function AdminLayoutComponent({ children, initialToken }: PropsWithChildren<{ initialToken: string | undefined }>) {
   const [state, setState] = useState<'finished' | 'pending'>('finished')
@@ -47,20 +48,6 @@ export function AdminLayoutComponent({ children, initialToken }: PropsWithChildr
     googleOAuth.getClient().requestAccessToken({ prompt: '' })
   }
 
-  async function handleSignOut() {
-    if (!auth?.token.access_token) return
-
-    setState('pending')
-    const {
-      successful,
-    } = await new Promise<google.accounts.RevocationResponse>(res => google.accounts.oauth2.revoke(auth.token.access_token, res))
-
-    if (successful) {
-      setAuth(null)
-      setState('finished')
-    }
-  }
-
   return (
     <>
       <div className="relative h-screen w-full overflow-auto">
@@ -75,10 +62,15 @@ export function AdminLayoutComponent({ children, initialToken }: PropsWithChildr
         )}
         {!!auth && (
           <div className={`
-            sticky flex justify-center -top-px z-10
-            bg-background
+            sticky flex justify-between
+            sm:justify-center
+            -top-px z-10 bg-background
           `}>
-            <Button variant="secondary" onClick={handleSignOut} disabled={state === 'pending'}>
+            <Button className="sm:absolute top-0 left-0" variant="outline" render={<Link href="/"/>} nativeButton={false}>
+              Voltar ao site
+            </Button>
+
+            <Button variant="secondary" disabled={state === 'pending'} render={<Link href="/admin/logout"/>} nativeButton={false}>
               {state === 'finished' ? 'Desconectar do Google' : 'Desconectando...'}
             </Button>
           </div>

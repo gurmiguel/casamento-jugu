@@ -2,7 +2,7 @@
 
 import { DialogRootProps, Dialog as BaseDialog } from '@base-ui/react'
 import { createContext, PropsWithChildren, ReactNode, useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react'
-import { Dialog, DialogHandle } from '../ui/dialog'
+import { Dialog, DialogHandle } from '~/components/ui/dialog'
 
 const dialogContext = createContext({} as DialogContext)
 

@@ -6,7 +6,7 @@ export function OrnamentDivider({ svgProps, ...props}: JSX.IntrinsicElements['di
   return (
 
     <div {...props} className={cn('bg-background', props.className)}>
-      <Ornament {...svgProps} className={cn('mx-auto block h-12 md:18 drop-shadow-xs', svgProps?.className)} />
+      <Ornament {...svgProps} className={cn('mx-auto block h-12 md:h-18 drop-shadow-xs', svgProps?.className)} />
     </div>
   )
 }

@@ -3,7 +3,7 @@
 
 import { BanIcon, Loader2Icon, Trash2Icon } from 'lucide-react'
 import { useEffect, useEffectEvent, useState } from 'react'
-import { useDialog } from '~/components/Dialog/context'
+import { useDialog } from '~/contexts/dialog/context'
 import { Button } from '~/components/ui/button'
 import { createHandle, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '~/components/ui/dialog'
 import { PreloadedImage } from '~/components/ui/preloaded-image'

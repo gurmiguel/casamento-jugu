@@ -39,22 +39,7 @@ export const auth = betterAuth({
       prompt: 'consent',
       disableImplicitSignUp: true,
     },
-  }, /*
-  databaseHooks: {
-    user: {
-      create: {
-        async before(user, ctx) {
-          const [{ count: usersCount }] = await db.select({ count: count() })
-            .from(schema.user)
-            .where(eq(schema.user.email, user.email))
-
-          if (usersCount == 0) {
-            throw ctx?.redirect('/admin/login?error=unregistered_user')
-          }
-        },
-      },
-    },
-  }, */
+  },
   onAPIError: {
     errorURL: '/admin/login',
   },

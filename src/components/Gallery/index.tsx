@@ -7,7 +7,7 @@ import { cn } from '~/lib/ui'
 import { Marquee } from '../ui/marquee'
 import { PreloadedImage } from '../ui/preloaded-image'
 import { H2, H5 } from '../ui/typography'
-import { ViewAwareContainer } from '../ViewAwareContainer'
+import { ViewAwareContainer } from '../utilitary/view-aware-container'
 import { OrnamentDivider } from '../ui/ornament-divider'
 
 interface ImageItem {
@@ -91,22 +91,23 @@ function GalleryRow({ images, velocity, rows }: RowProps) {
 
   return (
     <div className="w-full group -my-px" data-paused={velocity === 0 ? true : undefined}>
-      <Marquee className={cn(`
-        transition-opacity duration-500
-        [&>.rfm-overlay]:before:transition-all
-        [&>.rfm-overlay]:after:transition-all
-        group-data-[paused=true]:[&_.rfm-overlay]:before:-translate-x-full
-        [&_.rfm-overlay]:before:duration-500
-        group-data-[paused=true]:[&_.rfm-overlay]:after:translate-x-full
-        [&_.rfm-overlay]:after:duration-500
-      `, hidden && 'opacity-0')}
-      autoFill
-      speed={50}
-      play={velocity > 0}
-      gradient={!isHandheld}
-      gradientWidth={isLarge ? 160 : 70}
-      gradientColor="color-mix(in srgb, var(--background) 60%, transparent)"
-      pauseOnHover={false}
+      <Marquee
+        className={cn(`
+          transition-opacity duration-500
+          [&>.rfm-overlay]:before:transition-all
+          [&>.rfm-overlay]:after:transition-all
+          group-data-[paused=true]:[&_.rfm-overlay]:before:-translate-x-full
+          [&_.rfm-overlay]:before:duration-500
+          group-data-[paused=true]:[&_.rfm-overlay]:after:translate-x-full
+          [&_.rfm-overlay]:after:duration-500
+        `, hidden && 'opacity-0')}
+        autoFill
+        speed={50}
+        play={velocity > 0}
+        gradient={!isHandheld}
+        gradientWidth={isLarge ? 160 : 70}
+        gradientColor="color-mix(in srgb, var(--background) 60%, transparent)"
+        pauseOnHover={false}
       >
         {images.map(img => (
           <PreloadedImage key={img.id} src={img.path} alt=""

@@ -8,19 +8,20 @@ import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Progress, ProgressIndicator, ProgressLabel, ProgressTrack, ProgressValue } from '~/components/ui/progress'
 import { H4, H5, P, Strong } from '~/components/ui/typography'
-import { useAuth } from '~/contexts/auth/auth.context'
 import { useLocalStorage } from '~/hooks/use-local-storage'
 import { getImageUploadSignedUrl, refreshImages, saveUploadedImages } from './actions'
 import { GalleryImage, SelectedPhoto } from './components/gallery-image'
 import { useNavigationGuard } from 'next-navigation-guard'
 import QRCode from 'react-qr-code'
+import { useSession } from '~/lib/auth-client'
 
 interface Props {
   storedImages: { id: number, providerId: string | null, path: string }[]
+  googleAccessToken: string
 }
 
-export default function GalleryPageComponent({ storedImages }: Props) {
-  const { auth } = useAuth()
+export default function GalleryPageComponent({ storedImages, googleAccessToken }: Props) {
+  const { data: auth } = useSession()
   const [pickerSession, setPickerSession] = useLocalStorage<google.PickingSession | null>('picker-session')
   const [selectedPhotos, setSelectedPhotos] = useState<Array<SelectedPhoto> | null>(null)
   const [isStartingSession, startSessionTransition] = useTransition()
@@ -60,7 +61,7 @@ export default function GalleryPageComponent({ storedImages }: Props) {
       const currentSession: google.PickingSession = await fetch(`https://photospicker.googleapis.com/v1/sessions/${session?.id}`, {
         headers: {
           'accept-encoding': 'gzip',
-          'authorization': `Bearer ${auth.token.access_token}`,
+          'authorization': `Bearer ${googleAccessToken}`,
         },
       }).then(res => res.json())
 
@@ -71,7 +72,7 @@ export default function GalleryPageComponent({ storedImages }: Props) {
       const resources: google.MediaItemsResponse = await fetch(`https://photospicker.googleapis.com/v1/mediaItems?sessionId=${currentSession.id}&pageSize=100`, {
         headers: {
           'accept-encoding': 'gzip',
-          'authorization': `Bearer ${auth.token.access_token}`,
+          'authorization': `Bearer ${googleAccessToken}`,
         },
       }).then(res => res.json())
 
@@ -97,7 +98,7 @@ export default function GalleryPageComponent({ storedImages }: Props) {
         const response = await fetch(baseUrl + `=${dimensions.map(([d, size]) => `${d}${size}`).join('-')}`, {
           headers: {
             'accept-encoding': 'gzip',
-            'authorization': `Bearer ${auth.token.access_token}`,
+            'authorization': `Bearer ${googleAccessToken}`,
           },
         })
 
@@ -145,7 +146,7 @@ export default function GalleryPageComponent({ storedImages }: Props) {
         method: 'POST',
         headers: {
           'accept-encoding': 'gzip',
-          'authorization': `Bearer ${auth.token.access_token}`,
+          'authorization': `Bearer ${googleAccessToken}`,
         },
       }).then(res => res.json())
 
@@ -160,7 +161,7 @@ export default function GalleryPageComponent({ storedImages }: Props) {
       method: 'DELETE',
       headers: {
         'accept-encoding': 'gzip',
-        'authorization': `Bearer ${auth.token.access_token}`,
+        'authorization': `Bearer ${googleAccessToken}`,
       },
     })
 
@@ -258,7 +259,7 @@ export default function GalleryPageComponent({ storedImages }: Props) {
   return (
     <div className="flex flex-col items-center flex-1 pt-8">
       <div className="flex flex-col items-center justify-center mt-4">
-        <H4 className="font-normal mb-4">Autenticado como <Strong>{auth.displayName}</Strong></H4>
+        {auth && <H4 className="font-normal mb-4">Autenticado como <Strong>{auth.user.name}</Strong></H4>}
 
         {pickerSession === null && !isStartingSession && (
           <div className="flex max-sm:flex-col gap-1 sm:gap-4">

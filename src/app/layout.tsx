@@ -7,6 +7,8 @@ import ReactDOM from 'react-dom'
 import { Toaster } from '~/components/ui/sonner'
 import { DialogProvider } from '~/components/Dialog/context'
 import { TooltipProvider } from '~/components/ui/tooltip'
+import { Suspense } from 'react'
+import { DefaultFallback } from '~/lib/ssr'
 
 export const metadata: Metadata = {
   title: 'Casamento - Juliana e Gustavo',
@@ -30,7 +32,9 @@ export default function RootLayout({
         <NavigationGuardProvider>
           <TooltipProvider>
             <DialogProvider>
-              {children}
+              <Suspense fallback={<DefaultFallback />}>
+                {children}
+              </Suspense>
             </DialogProvider>
           </TooltipProvider>
           <Toaster closeButton />

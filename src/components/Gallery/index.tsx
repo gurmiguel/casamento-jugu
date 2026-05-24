@@ -56,7 +56,7 @@ export function Gallery({ images: useImages }: Props) {
           {visible && (
             <div className={`
               flex flex-wrap justify-center items-center grow
-              pointer-events-none
+              pointer-events-none gap-2
             `}>
               {images.map((row, i) => (
                 <GalleryRow key={i} images={row} velocity={velocity} rows={GALLERY_ROWS} />
@@ -96,7 +96,9 @@ function GalleryRow({ images, velocity, rows }: RowProps) {
         [&>.rfm-overlay]:before:transition-all
         [&>.rfm-overlay]:after:transition-all
         group-data-[paused=true]:[&_.rfm-overlay]:before:-translate-x-full
+        [&_.rfm-overlay]:before:duration-500
         group-data-[paused=true]:[&_.rfm-overlay]:after:translate-x-full
+        [&_.rfm-overlay]:after:duration-500
       `, hidden && 'opacity-0')}
       autoFill
       speed={50}
@@ -108,7 +110,10 @@ function GalleryRow({ images, velocity, rows }: RowProps) {
       >
         {images.map(img => (
           <PreloadedImage key={img.id} src={img.path} alt=""
-            className="min-h-48 w-auto max-w-none select-none"
+            className={`
+              min-h-48 w-auto max-w-none select-none mx-1
+              shadow/30
+            `}
             onLoad={onImageLoad}
             onError={onImageLoad}
             style={{

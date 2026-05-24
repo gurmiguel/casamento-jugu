@@ -27,6 +27,9 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '3mb',
     },
   },
+  allowedDevOrigins: [
+    '*.ngrok-free.app',
+  ],
 }
 
 export default nextConfig

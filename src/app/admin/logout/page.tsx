@@ -1,18 +1,17 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useAuth } from '~/contexts/auth/auth.context'
-import { setAuth } from '../utils'
+import { useEffect } from 'react'
+import { authClient } from '~/lib/auth-client'
+import { DefaultFallback } from '~/lib/ssr'
 
 export default function LogoutPage() {
   const router = useRouter()
-  const { auth } = useAuth()
 
-  if (auth.token.access_token) {
-    google.accounts.oauth2.revoke(auth.token.access_token, () => {
-      setAuth(null)
-    })
-  }
+  useEffect(() => {
+    authClient.signOut()
+      .then(() => router.replace('/admin/login'))
+  }, [router])
 
-  router.replace('/')
+  return <DefaultFallback />
 }

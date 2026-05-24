@@ -1,13 +1,44 @@
-import { cookies } from 'next/headers'
-import { GOOGLE_AUTH_TOKEN_COOKIE } from './utils'
-import { AdminLayoutComponent } from './layout.client'
+import { headers } from 'next/headers'
+import Link from 'next/link'
 import { PropsWithChildren } from 'react'
-import { withSuspense } from '~/lib/ssr'
+import { Button } from '~/components/ui/button'
+import { auth } from '~/lib/auth'
+import { cn } from '~/lib/ui'
 
-export default withSuspense(async function AdminLayout({ children }: PropsWithChildren) {
-  const cookieStore = await cookies()
+export default async function AdminLayout({ children }: PropsWithChildren) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
 
-  const cookie = cookieStore.get(GOOGLE_AUTH_TOKEN_COOKIE)?.value
+  return (
+    <>
+      <div className={`
+        relative h-screen w-full overflow-auto flex
+        flex-col
+      `}>
+        <div className={`
+          sticky flex justify-between container mx-auto
+          sm:justify-center
+          -top-px z-10 bg-background
+        `}>
+          <Button className={cn(session ? 'sm:absolute top-0 left-0' : 'ml-0 mr-auto')} variant="outline" render={<Link href="/"/>} nativeButton={false}>
+              Voltar ao site
+          </Button>
 
-  return <AdminLayoutComponent initialToken={cookie}>{children}</AdminLayoutComponent>
-})
+          {!!session && (
+            <Button variant="secondary" render={<Link href="/admin/logout"/>} nativeButton={false}>
+              Logout
+            </Button>
+          )}
+        </div>
+
+        <div className={`
+          flex-1 flex flex-col justify-center items-center
+          mt-8
+        `}>
+          {children}
+        </div>
+      </div>
+    </>
+  )
+}

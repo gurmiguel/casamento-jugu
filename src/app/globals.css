@@ -32,4 +32,7 @@
   #atcb-customTrigger-atcb-btn-custom-host {
     display: none;
   }
+  .rfm-marquee-container {
+    overflow: visible !important;
+  }
 }

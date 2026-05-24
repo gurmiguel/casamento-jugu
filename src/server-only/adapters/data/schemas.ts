@@ -1,6 +1,8 @@
 import { sql } from 'drizzle-orm'
 import { text, sqliteTable, integer } from 'drizzle-orm/sqlite-core'
 
+export * from './auth-schema'
+
 export const galleryTable = sqliteTable('gallery', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   path: text('path').notNull(),

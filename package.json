@@ -13,8 +13,10 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
+    "@better-auth/infra": "^0.2.8",
     "@libsql/client": "^0.17.3",
     "add-to-calendar-button-react": "^2.13.9",
+    "better-auth": "^1.6.11",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.10.0",
     "date-fns": "^4.1.0",

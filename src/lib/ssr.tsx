@@ -1,7 +1,7 @@
 import { ComponentProps, FC, Suspense } from 'react'
 import { JumpingDotsLoader } from '~/components/ui/jumping-dots'
 
-const DefaultFallback = () =>
+export const DefaultFallback = () =>
   <div className={`
     fixed inset-0 flex items-center justify-center
     animate-in fade-in duration-500 delay-1000

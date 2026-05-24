@@ -54,6 +54,7 @@ const buttonVariants = cva(
         `,
         'sm': 'h-9 gap-1 px-4 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3',
         'lg': 'h-13 gap-1.5 px-8 has-data-[icon=inline-end]:pr-5 has-data-[icon=inline-start]:pl-5',
+        'xl': 'h-16 gap-1.5 px-12 has-data-[icon=inline-end]:pr-5 has-data-[icon=inline-start]:pl-5',
         'icon': 'size-10',
         'icon-xs': 'size-7 [&_svg:not([class*=\'size-\'])]:size-3',
         'icon-sm': 'size-9',
@@ -76,7 +77,7 @@ function Button({
   type = 'button',
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
-  const hasButtonHandler = !!props.onClick || (!!props.render && !!(props as JSX.IntrinsicElements['a']).href)
+  const hasButtonHandler = !!props.onClick || type === 'submit' || (!!props.render && !!(props as JSX.IntrinsicElements['a']).href)
   return (
     <ButtonPrimitive
       data-slot="button"

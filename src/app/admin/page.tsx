@@ -8,7 +8,7 @@ export default function AdminPage() {
       <H1 className="mb-8 font-medium">Admin</H1>
 
       <nav className="flex flex-1">
-        <H3 as="ul" className="flex flex-col gap-4 list-disc">
+        <H3 as="ul" className="flex flex-col gap-4 list-disc ml-8">
           <li>
             <Link href="/admin/galeria" className="border-b-2 border-foreground hover:opacity-70">Galeria de fotos</Link>
           </li>

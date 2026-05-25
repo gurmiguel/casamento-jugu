@@ -177,8 +177,15 @@ export default function GalleryPageComponent({ storedImages, googleAccessToken }
     if (!selectedPhotos) return
 
     startSubmission(async () => {
-      const { url, signature, timestamp, apiKey } = await getImageUploadSignedUrl({ folder: 'casamento-jugu/galeria' })
+      const response = await getImageUploadSignedUrl({ params: { folder: 'casamento-jugu/galeria' } })
       const uploadedPhotos = new Array<UploadResponse>()
+
+      if (!response.data) {
+        toast.error('Ocorreu um erro ao tentar salvar as fotos')
+        return
+      }
+
+      const { url, signature, timestamp, apiKey } = response.data
 
       let targetUploadCount = 0
 
@@ -213,10 +220,12 @@ export default function GalleryPageComponent({ storedImages, googleAccessToken }
       await Promise.allSettled(tasks)
 
       if (uploadedPhotos.length > 0) {
-        await saveUploadedImages(uploadedPhotos.map(x => ({
-          id: x.public_id,
-          path: x.secure_url,
-        })))
+        await saveUploadedImages({
+          images: uploadedPhotos.map(x => ({
+            id: x.public_id,
+            path: x.secure_url,
+          })),
+        })
 
         setTimeout(() => {
           setPickerSession(null)

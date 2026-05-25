@@ -81,7 +81,7 @@ export function GalleryImage({ photo, onRemove, onToggle }: Props) {
 
     onRemove(id, () => new Promise(async res => {
       setIsDeleting(true)
-      await removeImage(id)
+      await removeImage({ id })
       res()
     }))
   }

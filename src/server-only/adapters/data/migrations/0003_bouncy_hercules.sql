@@ -1,0 +1,1 @@
+ALTER TABLE `invites` ADD `confirmed_amount` integer DEFAULT 0 NOT NULL;

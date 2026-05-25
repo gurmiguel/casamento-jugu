@@ -15,6 +15,20 @@
       "when": 1779579635422,
       "tag": "0001_friendly_bastion",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1779732352202,
+      "tag": "0002_goofy_giant_girl",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1779735509427,
+      "tag": "0003_bouncy_hercules",
+      "breakpoints": true
     }
   ]
 }

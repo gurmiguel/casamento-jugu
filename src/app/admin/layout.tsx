@@ -2,8 +2,8 @@ import { headers } from 'next/headers'
 import Link from 'next/link'
 import { PropsWithChildren } from 'react'
 import { Button } from '~/components/ui/button'
+import { H4, NoWrap, Strong } from '~/components/ui/typography'
 import { auth } from '~/lib/auth'
-import { cn } from '~/lib/ui'
 
 export default async function AdminLayout({ children }: PropsWithChildren) {
   const session = await auth.api.getSession({
@@ -17,18 +17,35 @@ export default async function AdminLayout({ children }: PropsWithChildren) {
         flex-col
       `}>
         <div className={`
-          sticky flex justify-between container mx-auto
-          sm:justify-center
-          -top-px z-10 bg-background
+          sticky grid grid-cols-3 justify-between
+          md:container
+          w-full
+          max-md:grid-cols-2
+          mx-auto -mt-px -top-px z-10 bg-background
+          mb-4
         `}>
-          <Button className={cn(session ? 'sm:absolute top-0 left-0' : 'ml-0 mr-auto')} variant="outline" render={<Link href="/"/>} nativeButton={false}>
+          <div>
+            <Button variant="outline" render={<Link href="/"/>} nativeButton={false}>
               Voltar ao site
-          </Button>
+            </Button>
+          </div>
 
           {!!session && (
-            <Button variant="secondary" render={<Link href="/admin/logout"/>} nativeButton={false}>
-              Logout
-            </Button>
+            <>
+              <H4 className={`
+                font-normal text-center leading-none
+                max-md:row-start-2 max-md:row-end-2 max-md:col-span-2
+              `}><NoWrap>Autenticado como</NoWrap> <br/><Strong>{session.user.name}</Strong></H4>
+
+              <div className="flex justify-end">
+                <Button variant="outline" render={<Link href="/admin"/>} nativeButton={false}>
+                  Voltar ao início
+                </Button>
+                <Button variant="secondary" render={<Link href="/admin/logout"/>} nativeButton={false}>
+                  Logout
+                </Button>
+              </div>
+            </>
           )}
         </div>
 

@@ -3,17 +3,16 @@
 
 import type { UploadResponse } from 'cloudinary/client'
 import { Loader2Icon } from 'lucide-react'
+import { useNavigationGuard } from 'next-navigation-guard'
 import { useEffect, useEffectEvent, useRef, useState, useTransition } from 'react'
+import QRCode from 'react-qr-code'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Progress, ProgressIndicator, ProgressLabel, ProgressTrack, ProgressValue } from '~/components/ui/progress'
-import { H4, H5, P, Strong } from '~/components/ui/typography'
+import { H5, P, Strong } from '~/components/ui/typography'
 import { useLocalStorage } from '~/hooks/use-local-storage'
 import { getImageUploadSignedUrl, refreshImages, saveUploadedImages } from './actions'
 import { GalleryImage, SelectedPhoto } from './components/gallery-image'
-import { useNavigationGuard } from 'next-navigation-guard'
-import QRCode from 'react-qr-code'
-import { useSession } from '~/lib/auth-client'
 
 interface Props {
   storedImages: { id: number, providerId: string | null, path: string }[]
@@ -21,7 +20,6 @@ interface Props {
 }
 
 export default function GalleryPageComponent({ storedImages, googleAccessToken }: Props) {
-  const { data: auth } = useSession()
   const [pickerSession, setPickerSession] = useLocalStorage<google.PickingSession | null>('picker-session')
   const [selectedPhotos, setSelectedPhotos] = useState<Array<SelectedPhoto> | null>(null)
   const [isStartingSession, startSessionTransition] = useTransition()
@@ -257,10 +255,8 @@ export default function GalleryPageComponent({ storedImages, googleAccessToken }
   }
 
   return (
-    <div className="flex flex-col items-center flex-1 pt-8">
+    <div className="flex flex-col items-center flex-1">
       <div className="flex flex-col items-center justify-center mt-4">
-        {auth && <H4 className="font-normal mb-4">Autenticado como <Strong>{auth.user.name}</Strong></H4>}
-
         {pickerSession === null && !isStartingSession && (
           <div className="flex max-sm:flex-col gap-1 sm:gap-4">
             <Button onClick={handlePickerInit}

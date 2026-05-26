@@ -1,5 +1,5 @@
 import { z } from '~/lib/zod'
-import { InviteeType } from '~/server-only/adapters/data/schemas/rsvp'
+import { InviteeType } from '~/server/adapters/data/schemas/rsvp'
 
 export const inviteeSchema = z.object({
   id: z.coerce.number().optional().transform(id => id === 0 ? undefined : id),

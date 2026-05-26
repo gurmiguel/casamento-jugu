@@ -2,11 +2,11 @@
 
 import { cacheLife, cacheTag, updateTag } from 'next/cache'
 import { z } from '~/lib/zod'
-import { actionClient } from '~/server-only/adapters/http/server-actions.client'
-import { InvitesRepository } from '~/server-only/repositories/invites.repository'
+import { authActionClient } from '~/server/adapters/http/server-actions'
+import { InvitesRepository } from '~/server/repositories/invites.repository'
 import { createInviteSchema, inviteSchema } from './schemas'
 
-export const getInviteAction = actionClient
+export const getInviteAction = authActionClient
   .inputSchema(z.object({ id: z.string() }))
   .action(async ({ parsedInput: { id } }) => {
     'use cache'
@@ -18,7 +18,7 @@ export const getInviteAction = actionClient
     return await repo.findById(id)
   })
 
-export const createInviteAction = actionClient
+export const createInviteAction = authActionClient
   .inputSchema(createInviteSchema)
   .action(async ({ parsedInput: { label, invitees } }) => {
     const repo = new InvitesRepository()
@@ -36,7 +36,7 @@ export const createInviteAction = actionClient
     return { success: true }
   })
 
-export const updateInviteAction = actionClient
+export const updateInviteAction = authActionClient
   .inputSchema(inviteSchema.extend({ id: z.uuid() }))
   .action(async ({ parsedInput: { id, label, invitees } }) => {
     const invitesRepo = new InvitesRepository()
@@ -81,7 +81,7 @@ export const updateInviteAction = actionClient
     return { success: true }
   })
 
-export const deleteInviteAction = actionClient
+export const deleteInviteAction = authActionClient
   .inputSchema(z.object({ id: z.string() }))
   .action(async ({ parsedInput: { id } }) => {
     const repo = new InvitesRepository()
@@ -90,7 +90,7 @@ export const deleteInviteAction = actionClient
     return { success: true }
   })
 
-export const getCountDetailsAction = actionClient
+export const getCountDetailsAction = authActionClient
   .action(async () => {
     'use cache'
 

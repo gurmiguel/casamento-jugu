@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { formDataToObject } from '~/lib/form-data'
 import { prettifyError } from '~/lib/zod'
-import { InviteeType, SelectInvite, SelectInvitee } from '~/server-only/adapters/data/schemas/rsvp'
+import { InviteeType, SelectInvite, SelectInvitee } from '~/server/adapters/data/schemas/rsvp'
 import { createInviteAction, updateInviteAction } from '../actions'
 import { createInviteSchema, inviteSchema } from '../schemas'
 

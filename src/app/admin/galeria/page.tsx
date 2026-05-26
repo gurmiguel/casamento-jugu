@@ -1,4 +1,4 @@
-import { getGalleryImages } from '~/server-only/dal/gallery'
+import { getGalleryImages } from '~/server/dal/gallery'
 import GalleryPageComponent from './page.client'
 import { auth } from '~/lib/auth'
 import { headers } from 'next/headers'

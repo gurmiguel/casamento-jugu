@@ -2,16 +2,16 @@
 
 import { revalidateTag, updateTag } from 'next/cache'
 import { z } from '~/lib/zod'
-import { actionClient } from '~/server-only/adapters/http/server-actions.client'
-import { GalleryRepository } from '~/server-only/repositories/gallery.repository'
-import { ImageUploader } from '~/server-only/services/image-uploader'
+import { authActionClient } from '~/server/adapters/http/server-actions'
+import { GalleryRepository } from '~/server/repositories/gallery.repository'
+import { ImageUploader } from '~/server/services/image-uploader'
 
-export const refreshImages = actionClient
+export const refreshImages = authActionClient
   .action(async () => {
     updateTag('gallery')
   })
 
-export const saveUploadedImages = actionClient
+export const saveUploadedImages = authActionClient
   .inputSchema(z.object({
     images: z.array(z.object({
       path: z.string(),
@@ -34,7 +34,7 @@ export const saveUploadedImages = actionClient
     return { success: true }
   })
 
-export const getImageUploadSignedUrl = actionClient
+export const getImageUploadSignedUrl = authActionClient
   .inputSchema(z.object({
     params: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
   }))
@@ -46,7 +46,7 @@ export const getImageUploadSignedUrl = actionClient
     return { timestamp, signature, url, apiKey }
   })
 
-export const removeImage = actionClient
+export const removeImage = authActionClient
   .inputSchema(z.object({ id: z.number() }))
   .action(async ({ parsedInput: { id } }) => {
     const galleryRepo = new GalleryRepository()

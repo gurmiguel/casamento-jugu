@@ -7,7 +7,7 @@ import { Location } from '~/components/Location'
 import { MainHero, MainHeroFallback } from '~/components/MainHero'
 import { OrnamentDivider } from '~/components/ui/ornament-divider'
 import { ADDRESS, DATE, DURATION_HOURS } from '~/config/data'
-import { getGalleryImages } from '~/server-only/dal/gallery'
+import { getGalleryImages } from '~/server/dal/gallery'
 
 export default async function Home() {
   const images = getGalleryImages()

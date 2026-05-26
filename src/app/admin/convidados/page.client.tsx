@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { PlusIcon, EditIcon, TrashIcon, SearchIcon, Loader2 } from 'lucide-react'
 import { FuseWorker } from 'fuse.js/worker'
 import { InviteWithInvitees, InviteFormDialog } from './components/invite-form.dialog'
-import { ConfirmationStatus, SelectInvite } from '~/server-only/adapters/data/schemas/rsvp'
+import { ConfirmationStatus, SelectInvite } from '~/server/adapters/data/schemas/rsvp'
 import { deleteInviteAction, getInviteAction } from './actions'
 import { toast } from 'sonner'
 import { useMediaQuery } from 'usehooks-ts'

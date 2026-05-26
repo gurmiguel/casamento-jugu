@@ -12,13 +12,6 @@ const nextConfig: NextConfig = {
     },
   },
   cacheComponents: true,
-  cacheLife: {
-    uploadedImages: {
-      stale: 60 * 60, // 1 hour
-      revalidate: 10, // revalidate every 10 seconds
-      expire: 24 * 60 * 60, // 1 day
-    },
-  },
   images: {
     remotePatterns: [new URL('https://res.cloudinary.com/**')],
   },

@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidateTag, updateTag } from 'next/cache'
-import z from 'zod'
+import { z } from '~/lib/zod'
 import { actionClient } from '~/server-only/adapters/http/server-actions.client'
 import { GalleryRepository } from '~/server-only/repositories/gallery.repository'
 import { ImageUploader } from '~/server-only/services/image-uploader'
@@ -38,12 +38,6 @@ export const getImageUploadSignedUrl = actionClient
   .inputSchema(z.object({
     params: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
   }))
-  .outputSchema(z.object({
-    timestamp: z.number(),
-    signature: z.string(),
-    url: z.string(),
-    apiKey: z.string(),
-  }))
   .action(async ({ parsedInput: { params } }) => {
     const uploader = new ImageUploader()
 
@@ -54,7 +48,6 @@ export const getImageUploadSignedUrl = actionClient
 
 export const removeImage = actionClient
   .inputSchema(z.object({ id: z.number() }))
-  .outputSchema(z.object({ success: z.boolean() }))
   .action(async ({ parsedInput: { id } }) => {
     const galleryRepo = new GalleryRepository()
     const uploader = new ImageUploader()
@@ -67,7 +60,7 @@ export const removeImage = actionClient
     if (image.providerId)
       await uploader.removeFile(image.providerId)
 
-    revalidateTag('gallery', 'uploadedImages')
+    revalidateTag('gallery', 'max')
 
     return { success: true }
   })

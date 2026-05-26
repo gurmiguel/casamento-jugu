@@ -22,6 +22,8 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
+    "fuse.js": "^7.4.0-beta.8",
+    "lodash": "^4.18.1",
     "lucide-react": "^0.562.0",
     "next": "^16.2.6",
     "next-navigation-guard": "^0.2.0",
@@ -39,12 +41,14 @@
     "usehooks-ts": "^3.1.1",
     "uuid": "^14.0.0",
     "vanilla-infinite-marquee": "^1.0.15",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "zod-form-data": "^3.0.1"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/gapi": "^0.0.47",
+    "@types/lodash": "^4.17.24",
     "@types/node": "^20",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",

@@ -51,7 +51,7 @@ export default async function AdminLayout({ children }: PropsWithChildren) {
 
         <div className={`
           flex-1 flex flex-col justify-center items-center
-          mt-8
+          mt-8 @container
         `}>
           {children}
         </div>

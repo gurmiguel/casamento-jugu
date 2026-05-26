@@ -4,7 +4,7 @@ import { GalleryRepository } from '../repositories/gallery.repository'
 export async function getGalleryImages() {
   'use cache'
 
-  cacheLife('uploadedImages')
+  cacheLife('max')
   cacheTag('gallery')
 
   const galleryRepo = new GalleryRepository()

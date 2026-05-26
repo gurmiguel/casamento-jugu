@@ -10,8 +10,7 @@ export enum ConfirmationStatus {
 }
 
 export enum InviteeType {
-  MAIN_INVITEE = 'MAIN_INVITEE',
-  PLUS_ONE = 'PLUS_ONE',
+  ADULT = 'ADULT',
   CHILD = 'CHILD',
 }
 
@@ -29,7 +28,9 @@ export const invitesTable = sqliteTable('invites', t => ({
   confirmationNotes: t.text('confirmation_notes'),
   updatedAt: t.integer('updated_at', { mode: 'timestamp_ms' }),
   confirmationDate: t.integer('confirmation_date', { mode: 'timestamp_ms' }),
-  confirmedAmount: t.integer()
+  invitedAmount: t.integer('invited_amount')
+    .default(0).notNull(),
+  confirmedAmount: t.integer('confirmed_amount')
     .default(0).notNull(),
 }))
 

@@ -1,19 +1,57 @@
 import { eq, inArray } from 'drizzle-orm'
 import { randomBytes } from 'node:crypto'
 import db from '../adapters/data/db'
-import { ConfirmationStatus, CreateInvitee, inviteeTable, invitesTable, SelectInvitee, SelectInvite } from '../adapters/data/schemas/rsvp'
+import { ConfirmationStatus, CreateInvitee, inviteeTable, invitesTable, InviteeType, SelectInvitee } from '../adapters/data/schemas/rsvp'
 
 export class InvitesRepository {
   // #region Admin methods
   public async findAll() {
-    const [invites, invitees] = await Promise.all([
+    const invites = await db.select()
+      .from(invitesTable)
+
+    return invites
+  }
+
+  public async findById(id: string) {
+    const [invite, invitees] = await Promise.all([
       db.select()
-        .from(invitesTable),
+        .from(invitesTable)
+        .where(eq(invitesTable.id, id))
+        .then(([it]) => it),
       db.select()
-        .from(inviteeTable),
+        .from(inviteeTable)
+        .where(eq(inviteeTable.inviteId, id)),
     ])
 
-    return this.mergeInviteAndInvitees(invites, invitees)
+    return {
+      ...invite,
+      invitees,
+    }
+  }
+
+  public async countDetails() {
+    const invitees = await db.select()
+      .from(inviteeTable)
+
+    function count(type: ConfirmationStatus) {
+      return invitees.reduce(({ adults, children }, item) => {
+        if (item.confirmationStatus !== type)
+          return { adults, children }
+
+        switch (item.inviteeType) {
+          case InviteeType.ADULT:
+            return { children, adults: adults + 1 }
+          case InviteeType.CHILD:
+            return { adults, children: children + 1 }
+        }
+      }, { adults: 0, children: 0 })
+    }
+
+    return {
+      confirmed: count(ConfirmationStatus.CONFIRMED),
+      refused: count(ConfirmationStatus.REFUSED),
+      pending: count(ConfirmationStatus.PENDING),
+    }
   }
 
   public async createInvite(label: string) {
@@ -21,6 +59,18 @@ export class InvitesRepository {
     return await db.insert(invitesTable)
       .values({ label, code })
       .returning()
+  }
+
+  public async updateInviteLabel(id: string, label: string) {
+    await db.update(invitesTable)
+      .set({ label, updatedAt: new Date() })
+      .where(eq(invitesTable.id, id))
+  }
+
+  public async updateInvitee(id: number, data: { name: string, inviteeType: InviteeType }) {
+    await db.update(inviteeTable)
+      .set(data)
+      .where(eq(inviteeTable.id, id))
   }
 
   public async deleteInvite(id: string) {
@@ -33,7 +83,7 @@ export class InvitesRepository {
       const createdInvitees = await db.insert(inviteeTable)
         .values(invitees)
         .returning()
-      const [{ status: inviteStatus }] = await tx.select({ status: invitesTable.confirmationStatus })
+      const [{ status: inviteStatus, amount }] = await tx.select({ status: invitesTable.confirmationStatus, amount: invitesTable.invitedAmount })
         .from(invitesTable)
         .where(eq(invitesTable.id, inviteId))
       await tx.update(invitesTable)
@@ -42,7 +92,9 @@ export class InvitesRepository {
           confirmationStatus: inviteStatus === ConfirmationStatus.CONFIRMED
             ? ConfirmationStatus.PARTIALLY_CONFIRMED
             : ConfirmationStatus.PENDING,
+          invitedAmount: amount + createdInvitees.length,
         })
+        .where(eq(invitesTable.id, inviteId))
       return createdInvitees
     })
   }
@@ -68,12 +120,13 @@ export class InvitesRepository {
 
       await tx.update(invitesTable)
         .set({
+          updatedAt: new Date(),
           confirmationStatus: status,
           confirmationDate: [ConfirmationStatus.CONFIRMED, ConfirmationStatus.REFUSED].includes(status)
             ? new Date()
             : null,
+          invitedAmount: updatedInvitees.length,
           confirmedAmount: confirmed,
-          updatedAt: new Date(),
         })
         .where(eq(invitesTable.id, inviteId))
     })
@@ -151,14 +204,5 @@ export class InvitesRepository {
       status,
       confirmed: confirmed.length,
     }
-  }
-
-  private mergeInviteAndInvitees(invites: SelectInvite[], invitees: SelectInvitee[]) {
-    const grouped = Object.groupBy(invitees, it => it.inviteId)
-
-    return invites.map(invite => ({
-      ...invite,
-      invitees: grouped[invite.id] ?? [],
-    }))
   }
 }

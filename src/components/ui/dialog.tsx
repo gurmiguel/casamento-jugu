@@ -80,7 +80,7 @@ function DialogContent({
             render={
               <Button
                 variant="ghost"
-                className="absolute top-5 right-5 rounded-full"
+                className="absolute top-2 right-2 rounded-full"
                 size="icon-sm"
               />
             }
@@ -158,7 +158,7 @@ function DialogDescription({
       data-slot="dialog-description"
       className={clsx(
         `
-          mt-0.5 text-sm leading-relaxed text-muted-foreground
+          mt-2 text-sm leading-none text-muted-foreground
           *:[a]:underline *:[a]:underline-offset-3
           *:[a]:hover:text-foreground
         `,

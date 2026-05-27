@@ -1,4 +1,5 @@
-import { JSX, PropsWithChildren, useEffect, useEffectEvent, useMemo, useRef } from 'react'
+import { JSX, PropsWithChildren, useMemo } from 'react'
+import { useIntersectionObserver } from 'usehooks-ts'
 
 type Props = JSX.IntrinsicElements['div'] & IntersectionObserverInit & {
   disabled?: boolean
@@ -6,32 +7,23 @@ type Props = JSX.IntrinsicElements['div'] & IntersectionObserverInit & {
 }
 
 export function ViewAwareContainer({ children, rootMargin, threshold, root, onIntersect, disabled = false, ...props }: PropsWithChildren<Props>) {
-  const containerRef = useRef<HTMLDivElement>(null)
-
   const observerOptions = useMemo<IntersectionObserverInit>(() => ({
     rootMargin,
     threshold,
     root,
   }), [root, rootMargin, threshold])
 
-  const onInitEvent = useEffectEvent((observerOptions: IntersectionObserverInit, disabled: boolean) => {
-    if (disabled) return
+  const [containerRef] = useIntersectionObserver({
+    initialIsIntersecting: false,
+    onChange(isIntersecting, entry) {
+      if (disabled) return
 
-    const container = containerRef.current
-
-    if (!container) return
-
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        onIntersect(entries[0])
+      if (isIntersecting) {
+        onIntersect(entry)
       }
-    }, observerOptions)
-
-    observer.observe(container)
-    return () => observer.disconnect()
+    },
+    ...observerOptions,
   })
-
-  useEffect(() => onInitEvent(observerOptions, disabled), [disabled, observerOptions])
 
   return (
     <div ref={containerRef} {...props}>

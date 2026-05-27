@@ -8,6 +8,7 @@ import { MainHero, MainHeroFallback } from '~/components/MainHero'
 import { OrnamentDivider } from '~/components/ui/ornament-divider'
 import { ADDRESS, DATE, DURATION_HOURS } from '~/config/data'
 import { getGalleryImages } from '~/server/dal/gallery'
+import { Footer } from '~/components/Footer'
 
 export default async function Home() {
   const images = getGalleryImages()
@@ -38,7 +39,7 @@ export default async function Home() {
 
       {/* TODO: implement Gift Registry */}
 
-      {/* TODO: implement Footer with copyright */}
+      <Footer />
     </div>
   )
 }

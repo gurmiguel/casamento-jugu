@@ -43,7 +43,7 @@ export function Gallery({ images: useImages }: Props) {
           </div>
         </div>
 
-        <ViewAwareContainer className={cn('relative overflow-hidden my-10 no-scrollbar', velocity === 1 && 'hover:*:*:paused!')}
+        <ViewAwareContainer className="relative overflow-hidden my-10 no-scrollbar"
           onMouseEnter={() => setVelocity(0)}
           onMouseLeave={() => setVelocity(1)}
           onTouchStart={() => setVelocity(0)}

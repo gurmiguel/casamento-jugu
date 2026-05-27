@@ -11,11 +11,12 @@ type Props = Omit<JSX.IntrinsicElements['img'], 'src' | 'onLoad' | 'onError'> & 
   decoding?: HTMLImageElement['decoding']
   onLoad?: () => void
   onError?: (event: Event | string) => void
+  intersectionOptions?: IntersectionObserverInit
 }
 
 const FALLBACK_PIXEL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
 
-export function PreloadedImage({ src, onLoad, onError, decoding, fallback, className, loading = 'eager', ...props }: Props) {
+export function PreloadedImage({ src, onLoad, onError, decoding, fallback, className, loading = 'eager', intersectionOptions, ...props }: Props) {
   const imgRef = useRef<HTMLImageElement>(null)
   const [loadedSrc, setLoadedSrc] = useState<string>()
 
@@ -45,6 +46,7 @@ export function PreloadedImage({ src, onLoad, onError, decoding, fallback, class
       }, {
         rootMargin: '200px 0px',
         threshold: 0.1,
+        ...intersectionOptions,
       })
       observer.observe(imgRef.current!)
       return () => observer.disconnect()

@@ -128,7 +128,7 @@ function GalleryRow({ images, velocity, rows }: RowProps) {
 }
 
 export function GalleryFallback() {
-  return <div className="" />
+  return <div className="min-h-156 h-dvh" />
 }
 
 function chunkArray<T>(arr: T[], chunks: number) {

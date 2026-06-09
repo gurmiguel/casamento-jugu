@@ -1,3 +1,5 @@
+'use client'
+
 import { type JSX } from 'react'
 import { Button as ButtonPrimitive } from '@base-ui/react/button'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -8,8 +10,7 @@ const buttonVariants = cva(
   `
     group/button inline-flex shrink-0 items-center justify-center
     rounded-none border border-transparent bg-clip-padding text-xs
-    font-semibold whitespace-nowrap uppercase transition-all outline-none
-    select-none
+    font-semibold whitespace-nowrap transition-all outline-none select-none
     focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30
     active:not-aria-[haspopup]:translate-y-px
     disabled:pointer-events-none disabled:opacity-50
@@ -62,10 +63,15 @@ const buttonVariants = cva(
         'icon-xl': 'size-16',
         'icon-2xl': 'size-24',
       },
+      casing: {
+        upper: 'uppercase',
+        normal: '',
+      },
     },
     defaultVariants: {
       variant: 'default',
       size: 'default',
+      casing: 'upper',
     },
   },
 )
@@ -75,13 +81,14 @@ function Button({
   variant = 'default',
   size = 'default',
   type = 'button',
+  casing = 'upper',
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
   const hasButtonHandler = !!props.onClick || type === 'submit' || (!!props.render && !!(props as JSX.IntrinsicElements['a']).href)
   return (
     <ButtonPrimitive
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }), hasButtonHandler && 'cursor-pointer')}
+      className={(state: ButtonPrimitive.State) => cn(buttonVariants({ variant, size, casing, className: typeof className === 'string' ? className : className?.(state) }), hasButtonHandler && 'cursor-pointer')}
       type={type}
       {...props}
     />

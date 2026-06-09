@@ -33,9 +33,9 @@ export function Gallery({ images: useImages }: Props) {
 
   return (
     <>
-      <OrnamentDivider />
+      <OrnamentDivider className="mt-6" />
 
-      <div className="overflow-hidden text-center mt-6">
+      <section className="overflow-hidden text-center mt-6">
         <div className="px-6">
           <div className="container mx-auto">
             <H2 className="mb-6">Galeria</H2>
@@ -49,7 +49,7 @@ export function Gallery({ images: useImages }: Props) {
           onTouchStart={() => setVelocity(0)}
           onTouchEnd={() => setVelocity(1)}
           onContextMenuCapture={e => e.preventDefault()}
-          onIntersect={() => setVisible(true)}
+          onIntersect={(entry) => entry.isIntersecting && setVisible(true)}
           disabled={visible}
           rootMargin="200px 0px"
         >
@@ -64,7 +64,7 @@ export function Gallery({ images: useImages }: Props) {
             </div>
           )}
         </ViewAwareContainer>
-      </div>
+      </section>
     </>
   )
 }

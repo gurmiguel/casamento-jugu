@@ -136,15 +136,16 @@ export class InvitesRepository {
 
   // #region Public methods
   public async findByCode(code: string) {
-    const [invite, invitees] = await Promise.all([
-      db.select()
-        .from(invitesTable)
-        .where(eq(invitesTable.code, code))
-        .then(([it]) => it),
-      db.select()
-        .from(inviteeTable)
-        .where(eq(inviteeTable.inviteId, code)),
-    ])
+    const invite = await db.select()
+      .from(invitesTable)
+      .where(eq(invitesTable.code, code))
+      .then(([it]) => it)
+
+    const invitees = await db.select()
+      .from(inviteeTable)
+      .where(eq(inviteeTable.inviteId, invite.id))
+
+    console.log(invitees)
 
     return {
       ...invite,
@@ -181,6 +182,7 @@ export class InvitesRepository {
           confirmationNotes: notes,
           updatedAt: new Date(),
         })
+        .where(eq(invitesTable.id, inviteId))
     })
   }
   // #endregion

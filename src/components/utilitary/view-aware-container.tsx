@@ -15,12 +15,10 @@ export function ViewAwareContainer({ children, rootMargin, threshold, root, onIn
 
   const [containerRef] = useIntersectionObserver({
     initialIsIntersecting: false,
-    onChange(isIntersecting, entry) {
+    onChange(_, entry) {
       if (disabled) return
 
-      if (isIntersecting) {
-        onIntersect(entry)
-      }
+      onIntersect(entry)
     },
     ...observerOptions,
   })

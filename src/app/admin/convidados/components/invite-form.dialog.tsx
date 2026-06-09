@@ -68,7 +68,6 @@ export function InviteFormDialog({ open, onOpenChange, invite }: Props) {
       toast.error(<div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: prettifyError(error) }} />)
       return
     }
-    console.log(data)
 
     setIsSubmitting(true)
 
@@ -145,6 +144,7 @@ export function InviteFormDialog({ open, onOpenChange, invite }: Props) {
               `}>
                 {invitees.map((inv, i) => (
                   <div key={i} className="flex gap-2 items-center overflow-hidden">
+                    {/* TODO: add confirmationStatus */}
                     <input
                       type="hidden"
                       name={`invitees[${i}].id`}
@@ -181,6 +181,7 @@ export function InviteFormDialog({ open, onOpenChange, invite }: Props) {
                     </Tooltip>
                   </div>
                 ))}
+                {/* TODO: add confirmationNotes */}
                 {invitees.length === 0 && (
                   <div className="text-sm text-muted-foreground text-center py-2.5">Nenhum convidado adicionado</div>
                 )}

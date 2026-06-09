@@ -7,6 +7,7 @@ import { InvitesRepository } from '~/server/repositories/invites.repository'
 import { createInviteSchema, inviteSchema } from './schemas'
 
 export const getInviteAction = authActionClient
+  .metadata({})
   .inputSchema(z.object({ id: z.string() }))
   .action(async ({ parsedInput: { id } }) => {
     'use cache'
@@ -19,6 +20,7 @@ export const getInviteAction = authActionClient
   })
 
 export const createInviteAction = authActionClient
+  .metadata({})
   .inputSchema(createInviteSchema)
   .action(async ({ parsedInput: { label, invitees } }) => {
     const repo = new InvitesRepository()
@@ -37,6 +39,7 @@ export const createInviteAction = authActionClient
   })
 
 export const updateInviteAction = authActionClient
+  .metadata({})
   .inputSchema(inviteSchema.extend({ id: z.uuid() }))
   .action(async ({ parsedInput: { id, label, invitees } }) => {
     const invitesRepo = new InvitesRepository()
@@ -82,6 +85,7 @@ export const updateInviteAction = authActionClient
   })
 
 export const deleteInviteAction = authActionClient
+  .metadata({})
   .inputSchema(z.object({ id: z.string() }))
   .action(async ({ parsedInput: { id } }) => {
     const repo = new InvitesRepository()
@@ -91,6 +95,7 @@ export const deleteInviteAction = authActionClient
   })
 
 export const getCountDetailsAction = authActionClient
+  .metadata({})
   .action(async () => {
     'use cache'
 

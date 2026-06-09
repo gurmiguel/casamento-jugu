@@ -7,11 +7,13 @@ import { GalleryRepository } from '~/server/repositories/gallery.repository'
 import { ImageUploader } from '~/server/services/image-uploader'
 
 export const refreshImages = authActionClient
+  .metadata({})
   .action(async () => {
     updateTag('gallery')
   })
 
 export const saveUploadedImages = authActionClient
+  .metadata({})
   .inputSchema(z.object({
     images: z.array(z.object({
       path: z.string(),
@@ -35,6 +37,7 @@ export const saveUploadedImages = authActionClient
   })
 
 export const getImageUploadSignedUrl = authActionClient
+  .metadata({})
   .inputSchema(z.object({
     params: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
   }))
@@ -47,6 +50,7 @@ export const getImageUploadSignedUrl = authActionClient
   })
 
 export const removeImage = authActionClient
+  .metadata({})
   .inputSchema(z.object({ id: z.number() }))
   .action(async ({ parsedInput: { id } }) => {
     const galleryRepo = new GalleryRepository()

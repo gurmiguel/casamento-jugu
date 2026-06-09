@@ -39,7 +39,7 @@ export function MainHero({ date, address }: Props) {
   }
 
   return (
-    <div className={`
+    <section className={`
       relative z-1 flex h-dvh flex-col
       items-center justify-center bg-primary text-primary-foreground
     `}>
@@ -144,7 +144,7 @@ export function MainHero({ date, address }: Props) {
           </H4>
         </div>
       </div>
-    </div>
+    </section>
   )
 }
 

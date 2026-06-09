@@ -10,7 +10,7 @@ interface Props {
 
 export function Location({ date, address }: Props) {
   return (
-    <div className="px-6 w-full my-8 max-sm:px-0">
+    <section className="px-6 w-full my-8 max-sm:px-0">
       <div className={`
         container mx-auto flex flex-col gap-8
         lg:flex-row lg:gap-16
@@ -86,6 +86,6 @@ export function Location({ date, address }: Props) {
           ></iframe>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

@@ -3,7 +3,7 @@ import { H2, P } from '~/components/ui/typography'
 
 export function AboutUs() {
   return (
-    <div className="px-6">
+    <section className="px-6">
       <div className={`
         container mx-auto flex flex-col items-center
         gap-4 py-16 text-center
@@ -20,6 +20,6 @@ export function AboutUs() {
           <br/>Laborum voluptate nulla et quis incididunt commodo proident amet eu. Sunt ullamco ex aliqua consequat tempor irure nisi pariatur quis ea et nisi. Est aute fugiat labore adipisicing et elit enim cillum quis anim voluptate et labore. Nulla duis esse ipsum officia minim dolore nisi aliquip laborum cillum nisi est sint. Pariatur amet ea occaecat eiusmod anim exercitation Lorem. Enim ut occaecat ea dolore voluptate pariatur cupidatat eiusmod aliquip.
         </P>
       </div>
-    </div>
+    </section>
   )
 }

@@ -9,37 +9,50 @@ import { OrnamentDivider } from '~/components/ui/ornament-divider'
 import { ADDRESS, DATE, DURATION_HOURS } from '~/config/data'
 import { getGalleryImages } from '~/server/dal/gallery'
 import { Footer } from '~/components/Footer'
+import { RSVP } from '~/components/RSVP'
+import { getInviteData, updateInviteStatus } from '~/server/dal/invites'
 
-export default async function Home() {
+export default async function Home({ searchParams }: PageProps<'/'>) {
   const images = getGalleryImages()
+  let { code: rsvpCode } = await searchParams
+  rsvpCode = Array.isArray(rsvpCode) ? rsvpCode[0] : rsvpCode
 
   return (
-    <div className="main">
+    <div className="main relative">
       <Suspense fallback={<MainHeroFallback />}>
         <MainHero date={DATE} address={ADDRESS} />
       </Suspense>
 
-      <AboutUs />
+      <div className="relative">
+        <AboutUs />
 
-      <Suspense fallback={<CountdownFallback />}>
-        <Countdown target={DATE}>
-          <AddToCalendar datetime={DATE} durationInHours={DURATION_HOURS} address={ADDRESS} />
-        </Countdown>
-      </Suspense>
+        <Suspense fallback={<CountdownFallback />}>
+          <Countdown target={DATE}>
+            <AddToCalendar datetime={DATE} durationInHours={DURATION_HOURS} address={ADDRESS} />
+          </Countdown>
+        </Suspense>
 
-      <OrnamentDivider className="mt-8" />
+        <OrnamentDivider className="mt-8" />
 
-      <Location date={DATE} address={ADDRESS} />
+        <Location date={DATE} address={ADDRESS} />
 
-      <Suspense fallback={<GalleryFallback />}>
-        <Gallery images={images} />
-      </Suspense>
+        <RSVP
+          date={DATE}
+          code={rsvpCode}
+          loadInvitees={getInviteData}
+          onSubmit={updateInviteStatus}
+        />
 
-      {/* TODO: implement RSVP section with CTA button */}
+        <Suspense fallback={<GalleryFallback />}>
+          <Gallery images={images} />
+        </Suspense>
 
-      {/* TODO: implement Gift Registry */}
+        {/* TODO: implement RSVP section with CTA button */}
 
-      <Footer />
+        {/* TODO: implement Gift Registry */}
+
+        <Footer />
+      </div>
     </div>
   )
 }

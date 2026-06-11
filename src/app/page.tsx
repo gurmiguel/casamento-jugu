@@ -47,8 +47,6 @@ export default async function Home({ searchParams }: PageProps<'/'>) {
           <Gallery images={images} />
         </Suspense>
 
-        {/* TODO: implement RSVP section with CTA button */}
-
         {/* TODO: implement Gift Registry */}
 
         <Footer />

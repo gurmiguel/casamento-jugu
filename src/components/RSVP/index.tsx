@@ -45,7 +45,7 @@ export function RSVP({ date, code, loadInvitees, onSubmit }: Props) {
         <div className="container mx-auto text-center">
           <div className={`
             flex flex-col items-center border-border rounded-lg
-            w-160 max-w-11/12 mx-auto py-8
+            w-132 max-w-11/12 mx-auto py-12
             sm:shadow-sm/30 sm:bg-accent
           `}>
             <H2 className="mb-4" underline={false}>RSVP</H2>
@@ -58,7 +58,7 @@ export function RSVP({ date, code, loadInvitees, onSubmit }: Props) {
               </>
             ) : (
               <>
-                <P className="mb-6">Confirme sua presença até o dia {formatDate(dueDate, 'dd/MM/yyyy')}</P>
+                <P className="mb-6 text-lg">Confirme sua presença até o dia {formatDate(dueDate, 'dd/MM/yyyy')}</P>
                 <ViewAwareContainer onIntersect={entry => setStickyHidden(entry.isIntersecting || entry.boundingClientRect.top < 0)}>
                   <Button ref={buttonRef} size="lg" className="rounded-full text-md" onClick={openRSVPDialog}>Confirmar presença</Button>
                 </ViewAwareContainer>

@@ -1,4 +1,4 @@
-import { useEffectEvent, useLayoutEffect, useState, useTransition, type ComponentProps, type SubmitEvent } from 'react'
+import { useEffect, useEffectEvent, useLayoutEffect, useState, useTransition, type ComponentProps, type SubmitEvent } from 'react'
 import { toast } from 'sonner'
 import { formatValidationError, type ServerActionResponse } from '~/lib/actions'
 import { cn } from '~/lib/ui'
@@ -7,8 +7,10 @@ import { Button } from '../ui/button'
 import { ButtonGroup } from '../ui/button-group'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog'
 import { JumpingDotsLoader } from '../ui/jumping-dots'
+import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
 import { H5 } from '../ui/typography'
+import { useRouter } from 'next/navigation'
 
 type InviteeData = Pick<SelectInvitee, 'id' | 'name' | 'inviteeType' | 'confirmationStatus'>
 type InviteeStatusData = Pick<SelectInvitee, 'id' | 'confirmationStatus'>
@@ -41,6 +43,8 @@ const buttons = [
 ]
 
 export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, onSubmit }: Props) {
+  const router = useRouter()
+
   const [isLoadingInvite, startLoadingInvite] = useTransition()
   const [isSubmitting, startSubmitting] = useTransition()
 
@@ -50,7 +54,7 @@ export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, o
   const [statuses, setStatuses] = useState(new Array<InviteeStatusData>())
   const [notes, setNotes] = useState('')
 
-  const onOpenEvent = useEffectEvent((open: boolean) => {
+  const onOpenEvent = useEffectEvent((open: boolean, code: string | null) => {
     if (!open) return
     if (!code) return
 
@@ -64,7 +68,10 @@ export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, o
           description: error,
         })
 
-        return onOpenChange(false)
+        if (codeProp)
+          return onOpenChange(false)
+        else
+          return setCode(null)
       }
 
       setInviteData(response.data)
@@ -82,7 +89,16 @@ export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, o
     }
   })
 
-  useLayoutEffect(() => onOpenEvent(open), [open])
+  useEffect(() => onOpenEvent(open, code), [open, code])
+
+  useLayoutEffect(() => {
+    if (!code) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCode(codeProp)
+      setInviteData(null)
+      setNotes('')
+    }
+  }, [codeProp, code])
 
   function onStatusChange(id: number, status: ConfirmationStatus) {
     setStatuses(statuses => {
@@ -97,11 +113,23 @@ export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, o
     })
   }
 
-  function handleSubmit(e: SubmitEvent) {
+  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
 
+    if (!code) {
+      const $code = e.currentTarget.elements.namedItem('code') as HTMLInputElement | null
+      if (!$code?.value || $code.value.length < 6) {
+        return toast.error('Informe o código do convite', {
+          description: 'O código é composto por 6 caracteres.',
+        })
+      }
+
+      setCode($code.value)
+      router.replace(`/?code=${$code.value}`, { scroll: false })
+      return
+    }
+
     startSubmitting(async () => {
-      if (!code) return
       const response = await onSubmit({ code, invitees: statuses, notes })
 
       if (!response.data) {
@@ -133,7 +161,7 @@ export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, o
               </DialogHeader>
               <JumpingDotsLoader className="mt-4 mb-16" color="var(--primary)" />
             </>
-          ) : !!inviteData && (
+          ) : inviteData ? (
             <>
               <DialogHeader className="mt-2 pb-0">
                 <DialogTitle>Confirme sua presença</DialogTitle>
@@ -181,6 +209,33 @@ export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, o
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? <JumpingDotsLoader size="sm" /> : 'Enviar'}
                 </Button>
+              </DialogFooter>
+            </>
+          ) : (
+            <>
+              <DialogHeader className="mt-2">
+                <DialogTitle>Confirme sua presença</DialogTitle>
+                <DialogDescription>
+                  Insira o código do seu convite para continuar.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col items-center mx-4">
+                <label className="text-lg">Código do convite</label>
+                <Input
+                  name="code"
+                  className={`
+                    w-72 text-center uppercase text-9xl
+                    md:text-6xl
+                    h-auto tracking-[0.35rem]
+                  `}
+                  autoCapitalize="characters"
+                  maxLength={6}
+                  autoFocus
+                />
+              </div>
+              <DialogFooter>
+                <DialogClose render={<Button variant="ghost">Cancelar</Button>} />
+                <Button type="submit">Continuar</Button>
               </DialogFooter>
             </>
           )}

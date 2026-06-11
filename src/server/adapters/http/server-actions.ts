@@ -5,6 +5,7 @@ import z from 'zod'
 
 export const actionClient = createSafeActionClient({
   defaultValidationErrorsShape: 'flattened',
+  throwValidationErrors: false,
   defineMetadataSchema: () => z.object({
     serverErrorMessage: z.string().optional(),
   }).optional(),

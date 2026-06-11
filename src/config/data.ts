@@ -12,3 +12,5 @@ export const ADDRESS: IAddress = {
   street: 'Est. Maria Cristina',
   label: 'Recanto Flor da Vila',
 }
+
+export const INVITE_CODE_SIZE = 6

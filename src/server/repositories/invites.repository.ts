@@ -2,6 +2,7 @@ import { eq, inArray } from 'drizzle-orm'
 import { randomBytes } from 'node:crypto'
 import db from '../adapters/data/db'
 import { ConfirmationStatus, CreateInvitee, inviteeTable, invitesTable, InviteeType, SelectInvitee } from '../adapters/data/schemas/rsvp'
+import { INVITE_CODE_SIZE } from '~/config/data'
 
 export class InvitesRepository {
   // #region Admin methods
@@ -55,7 +56,7 @@ export class InvitesRepository {
   }
 
   public async createInvite(label: string) {
-    const code = randomBytes(3).toString('hex')
+    const code = randomBytes(INVITE_CODE_SIZE / 2).toString('hex')
     return await db.insert(invitesTable)
       .values({ label, code })
       .returning()
@@ -141,11 +142,11 @@ export class InvitesRepository {
       .where(eq(invitesTable.code, code))
       .then(([it]) => it)
 
+    if (!invite) return null
+
     const invitees = await db.select()
       .from(inviteeTable)
       .where(eq(inviteeTable.inviteId, invite.id))
-
-    console.log(invitees)
 
     return {
       ...invite,

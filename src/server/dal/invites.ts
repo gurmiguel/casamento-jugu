@@ -3,10 +3,11 @@
 import { cacheLife, cacheTag, updateTag } from 'next/cache'
 import { InvitesRepository } from '../repositories/invites.repository'
 import { actionClient } from '../adapters/http/server-actions'
-import z from 'zod'
+import { z } from '~/lib/zod'
 import { ConfirmationStatus } from '../adapters/data/schemas'
 import { returnValidationErrors } from 'next-safe-action'
 import sanitizeHtml from 'sanitize-html'
+import { INVITE_CODE_SIZE } from '~/config/data'
 
 export async function getInvites() {
   'use cache'
@@ -18,14 +19,26 @@ export async function getInvites() {
   return await invitesRepo.findAll()
 }
 
+const getInviteDataInputSchema = z.object({
+  code: z.string()
+    .length(INVITE_CODE_SIZE, 'Código do convite inválido')
+    .regex(/[a-z\d]+/i, 'Código do convite inválido'),
+})
 export const getInviteData = actionClient
   .metadata({})
-  .inputSchema(z.object({ code: z.string() }))
+  .inputSchema(getInviteDataInputSchema)
   .action(async ({ parsedInput: { code } }) => {
     'use cache'
 
     const invitesRepo = new InvitesRepository()
     const invite = await invitesRepo.findByCode(code)
+
+    if (!invite) {
+      // TODO: handle issue involving next-safe-action and 'use cache' sending this as a generic server error
+      return returnValidationErrors(getInviteDataInputSchema, {
+        code: { _errors: ['Código do convite inválido.'] },
+      })
+    }
 
     cacheTag(`invites.${invite.id}`)
 

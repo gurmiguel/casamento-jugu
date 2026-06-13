@@ -39,7 +39,7 @@ export function AddToCalendar({ datetime, durationInHours, address }: Props) {
         '--list-background: var(--primary)',
         '--list-hover-background: color-mix(in srgb, var(--primary), #000 10%)',
       ].join(';'),
-      customCss: new URL('./add-to-calendar.custom.css', import.meta.url).href,
+      customCss: '/add-to-calendar.custom.css',
       buttonStyle: 'custom',
       customLabels: {
         google: 'Google (Gmail)',

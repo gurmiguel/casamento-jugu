@@ -72,7 +72,6 @@ export function RSVP({ date, code, loadInvitees, onSubmit }: Props) {
         <>
           <div className={`
             flex justify-center
-            lg:hidden
             data-[hidden=true]:hidden
             sticky bottom-0 z-10 py-2
             not-data-[hidden=true]:animate-in

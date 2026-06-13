@@ -42,7 +42,7 @@ const buttons = [
   },
 ]
 
-export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, onSubmit }: Props) {
+export function RSVPDialog({ code, open, onOpenChange, loadInvitees, onSubmit }: Props) {
   const router = useRouter()
 
   const [isLoadingInvite, startLoadingInvite] = useTransition()
@@ -50,9 +50,15 @@ export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, o
 
   const [inviteData, setInviteData] = useState<{ label: string, invitees: InviteeData[] } | null>(null)
 
-  const [code, setCode] = useState(codeProp)
   const [statuses, setStatuses] = useState(new Array<InviteeStatusData>())
   const [notes, setNotes] = useState('')
+
+  useLayoutEffect(() => {
+    const _ = code
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setInviteData(null)
+    setNotes('')
+  }, [code])
 
   const onOpenEvent = useEffectEvent((open: boolean, code: string | null) => {
     if (!open) return
@@ -68,10 +74,8 @@ export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, o
           description: error,
         })
 
-        if (codeProp)
-          return onOpenChange(false)
-        else
-          return setCode(null)
+        router.push('/', { scroll: false })
+        return
       }
 
       setInviteData(response.data)
@@ -83,22 +87,12 @@ export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, o
     })
 
     return () => {
-      setCode(codeProp)
       setInviteData(null)
       setNotes('')
     }
   })
 
   useEffect(() => onOpenEvent(open, code), [open, code])
-
-  useLayoutEffect(() => {
-    if (!code) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCode(codeProp)
-      setInviteData(null)
-      setNotes('')
-    }
-  }, [codeProp, code])
 
   function onStatusChange(id: number, status: ConfirmationStatus) {
     setStatuses(statuses => {
@@ -116,6 +110,7 @@ export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, o
   function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
 
+    console.log({code})
     if (!code) {
       const $code = e.currentTarget.elements.namedItem('code') as HTMLInputElement | null
       if (!$code?.value || $code.value.length < 6) {
@@ -124,7 +119,6 @@ export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, o
         })
       }
 
-      setCode($code.value)
       router.replace(`/?code=${$code.value}`, { scroll: false })
       return
     }
@@ -224,10 +218,10 @@ export function RSVPDialog({ code: codeProp, open, onOpenChange, loadInvitees, o
                 <Input
                   name="code"
                   className={`
-                    w-72 text-center uppercase text-9xl
-                    md:text-6xl
+                    w-72 text-center uppercase text-5xl! font-[Arial]
                     h-auto tracking-[0.35rem]
                   `}
+                  style={{ fontWeight: 'bold' }}
                   autoCapitalize="characters"
                   maxLength={6}
                   autoFocus

@@ -1,23 +1,24 @@
 'use client'
 
-import { ComponentProps, useEffect, useEffectEvent, useMemo, useState } from 'react'
-import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
-import { Badge } from '~/components/ui/badge'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog'
-import { PlusIcon, EditIcon, TrashIcon, SearchIcon, Loader2 } from 'lucide-react'
 import { FuseWorker } from 'fuse.js/worker'
-import { InviteWithInvitees, InviteFormDialog } from './components/invite-form.dialog'
-import { ConfirmationStatus, SelectInvite } from '~/server/adapters/data/schemas/rsvp'
-import { deleteInviteAction, getInviteAction } from './actions'
+import { EditIcon, Loader2, NotebookPenIcon, PlusIcon, SearchIcon, TrashIcon } from 'lucide-react'
+import { ComponentProps, useEffect, useEffectEvent, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { useMediaQuery } from 'usehooks-ts'
-import { screens } from '~/config/theme'
-import { cn } from '~/lib/ui'
+import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { H1 } from '~/components/ui/typography'
+import { screens } from '~/config/theme'
 import { useDialog } from '~/contexts/dialog/context'
+import { cn } from '~/lib/ui'
+import { ConfirmationStatus, SelectInvite } from '~/server/adapters/data/schemas/rsvp'
+import { deleteInviteAction, getInviteAction } from './actions'
 import { CountDetailsDialog } from './components/count-details.dialog'
+import { InviteFormDialog, InviteWithInvitees } from './components/invite-form.dialog'
 
 interface Props {
   invites: SelectInvite[]
@@ -110,9 +111,14 @@ export function InvitesPagesComponent({ invites }: Props) {
   return (
     <div className={`
       flex flex-col flex-1 w-full max-w-5xl
-      mx-auto px-4 py-8
+      mx-auto px-4
+      sm:py-8
     `}>
-      <div className="flex justify-between items-center mb-8">
+      <div className={`
+        flex
+        max-sm:flex-col max-sm:gap-2
+        justify-between items-center mb-8
+      `}>
         <div className="flex items-center gap-2">
           <H1 variant="h2" className="-mt-1">Convites</H1>
           <Button variant="ghost" onClick={handleOpenAmountDetails}>Contagem</Button>
@@ -152,7 +158,7 @@ export function InvitesPagesComponent({ invites }: Props) {
         </div>
       </div>
 
-      <div className="border overflow-hidden max-sm:-mx-4">
+      <div className="border overflow-hidden max-sm:-mx-3.5">
         <table className={`
           w-full text-sm text-left
           *:*:*:px-4 *:*:*:py-3
@@ -174,8 +180,28 @@ export function InvitesPagesComponent({ invites }: Props) {
           <tbody className="divide-y bg-white">
             {filteredInvites.length > 0 ? (
               filteredInvites.map(inv => (
-                <tr key={inv.id} className="hover:bg-muted/50 transition-colors">
-                  <td className="font-medium">{inv.label}</td>
+                <tr key={inv.id} className="hover:bg-muted/50 transition-colors leading-none">
+                  <td className="font-medium">
+                    <div className="flex items-center">
+                      {inv.label}
+                      {inv.confirmationNotes && (
+                        <Popover>
+                          <PopoverTrigger
+                            render={(
+                              <span className="text-muted-foreground ml-auto">
+                                <NotebookPenIcon className="size-4" />
+                              </span>
+                            )}
+                            openOnHover
+                          />
+                          <PopoverContent className="block whitespace-pre-wrap leading-none text-xs">
+                            <span className="text-muted">Observações:</span><br/>
+                            {inv.confirmationNotes}
+                          </PopoverContent>
+                        </Popover>
+                      )}
+                    </div>
+                  </td>
                   <td className="text-center text-lg font-bold font-sans">{inv.invitedAmount}</td>
                   <td className="text-center">
                     <Badge variant={getStatusBadgeVariant(inv.confirmationStatus)} className="@max-md:text-[0.625rem]">
@@ -184,12 +210,12 @@ export function InvitesPagesComponent({ invites }: Props) {
                   </td>
                   <td className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size={isSmall ? 'icon-xs' :'icon'} onClick={() => handleOpenEditInvite(inv.id)}>
+                      <Button variant="ghost" size={isSmall ? 'icon-xs' :'icon'} onClick={() => handleOpenEditInvite(inv.id)} title="Editar/Visualizar">
                         {fetchingId === inv.id
                           ? <Loader2 className="size-4 animate-spin" />
                           : <EditIcon className="size-4" />}
                       </Button>
-                      <Button variant="ghost" size={isSmall ? 'icon-xs' :'icon'} className="text-destructive hover:text-destructive" onClick={() => setInviteToDelete(inv.id)}>
+                      <Button variant="ghost" size={isSmall ? 'icon-xs' :'icon'} className="text-destructive hover:text-destructive" onClick={() => setInviteToDelete(inv.id)} title="Remover">
                         <TrashIcon className="size-4" />
                       </Button>
                     </div>
@@ -239,7 +265,7 @@ export function InvitesPagesComponent({ invites }: Props) {
 function getStatusBadgeVariant(status: ConfirmationStatus) {
   type BadgeVariant = ComponentProps<typeof Badge>['variant']
   const variants: Record<ConfirmationStatus, BadgeVariant> = {
-    [ConfirmationStatus.CONFIRMED]: 'default',
+    [ConfirmationStatus.CONFIRMED]: 'success',
     [ConfirmationStatus.PARTIALLY_CONFIRMED]: 'secondary',
     [ConfirmationStatus.REFUSED]: 'destructive',
     [ConfirmationStatus.PENDING]: 'outline',

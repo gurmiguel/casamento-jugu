@@ -3,14 +3,14 @@
 
 import { BanIcon, Loader2Icon, Trash2Icon } from 'lucide-react'
 import { useEffect, useEffectEvent, useState } from 'react'
-import { useDialog } from '~/contexts/dialog/context'
 import { Button } from '~/components/ui/button'
+import { Checkbox } from '~/components/ui/checkbox'
 import { createHandle, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '~/components/ui/dialog'
+import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { PreloadedImage } from '~/components/ui/preloaded-image'
 import { H4 } from '~/components/ui/typography'
+import { useDialog } from '~/contexts/dialog/context'
 import { removeImage } from '../actions'
-import { Checkbox } from '~/components/ui/checkbox'
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 
 export type SelectedPhoto = google.PickerMediaItem & {
   downloaded?: { url: string, blob: Blob } | Error
@@ -88,15 +88,15 @@ export function GalleryImage({ photo, onRemove, onToggle }: Props) {
 
   if (selectedPhoto?.downloaded instanceof Error)
     return (
-      <Tooltip>
-        <TooltipTrigger render={<div className={`
+      <Popover>
+        <PopoverTrigger openOnHover render={<div className={`
           w-60 h-80 bg-muted flex items-center
           justify-center border-border
         `}>
           <BanIcon className="size-14" />
         </div>} />
-        <TooltipContent>Não foi possível carregar a imagem</TooltipContent>
-      </Tooltip>
+        <PopoverContent>Não foi possível carregar a imagem</PopoverContent>
+      </Popover>
     )
 
   return (
@@ -125,6 +125,7 @@ export function GalleryImage({ photo, onRemove, onToggle }: Props) {
           className="absolute rounded-full top-0 right-0"
           onClick={() => handleRemovePhoto()}
           disabled={isDeleting}
+          title="Remover foto"
         >{isDeleting
             ? <Loader2Icon className="animate-spin" />
             : <Trash2Icon color="var(--destructive)" className="drop-shadow-xs drop-shadow-black/40" />}</Button>

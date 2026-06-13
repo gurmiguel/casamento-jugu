@@ -1,20 +1,24 @@
 'use client'
 
-import { CopyIcon, PlusIcon, TrashIcon } from 'lucide-react'
+import { CheckCircleIcon, CopyIcon, HelpCircleIcon, PlusIcon, TrashIcon, XCircleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
+import { InputGroup, InputGroupAddon, InputGroupInput } from '~/components/ui/input-group'
+import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { formDataToObject } from '~/lib/form-data'
 import { prettifyError } from '~/lib/zod'
-import { InviteeType, SelectInvite, SelectInvitee } from '~/server/adapters/data/schemas/rsvp'
+import { ConfirmationStatus, InviteeType, SelectInvite, SelectInvitee } from '~/server/adapters/data/schemas/rsvp'
 import { createInviteAction, updateInviteAction } from '../actions'
 import { createInviteSchema, inviteSchema } from '../schemas'
 
 export type InviteWithInvitees = SelectInvite & { invitees: SelectInvitee[] }
+
+type InviteeData = Pick<SelectInvitee, 'name' | 'inviteeType'> & Partial<Pick<SelectInvitee, 'id' | 'confirmationStatus'>>
 
 interface Props {
   open: boolean
@@ -28,7 +32,7 @@ const inviteeTypeOptions = Object.values(InviteeType).map(it => ({
 }))
 
 export function InviteFormDialog({ open, onOpenChange, invite }: Props) {
-  const [invitees, setInvitees] = useState<Array<{ id?: number, name: string, inviteeType: InviteeType }>>([])
+  const [invitees, setInvitees] = useState<Array<InviteeData>>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validationSchema = invite ? inviteSchema : createInviteSchema
@@ -37,7 +41,7 @@ export function InviteFormDialog({ open, onOpenChange, invite }: Props) {
     if (!open) return
 
     if (invite) {
-      setInvitees(invite.invitees.map(i => ({ id: i.id, name: i.name, inviteeType: i.inviteeType })))
+      setInvitees(invite.invitees.map(i => ({ id: i.id, name: i.name, inviteeType: i.inviteeType, confirmationStatus: i.confirmationStatus })))
     } else {
       setInvitees([{ name: '', inviteeType: InviteeType.ADULT }])
     }
@@ -100,7 +104,7 @@ export function InviteFormDialog({ open, onOpenChange, invite }: Props) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="m-4 mt-0">
+          <div className="mx-4">
             <div className="flex gap-2">
               <label className="flex flex-col flex-2/3">
                 <div className="text-sm font-semibold">Família</div>
@@ -111,15 +115,19 @@ export function InviteFormDialog({ open, onOpenChange, invite }: Props) {
                 <label className="flex flex-col flex-1/3 basis-40">
                   <div className="text-sm font-semibold">Código do convite</div>
                   <div className="flex gap-2">
-                    <Input value={invite.code} readOnly className="pl-3 bg-muted/20 text-muted-foreground" />
-                    <Tooltip>
-                      <TooltipTrigger render={
-                        <Button variant="outline" size="icon" onClick={handleCopyCode} className="shrink-0">
-                          <CopyIcon className="size-4" />
-                        </Button>
-                      } />
-                      <TooltipContent>Copiar código</TooltipContent>
-                    </Tooltip>
+                    <InputGroup>
+                      <InputGroupInput value={invite.code} readOnly className="pl-3 bg-muted/20 text-muted-foreground font-[Arial] uppercase" style={{ fontWeight: 'bold' }} />
+                      <InputGroupAddon align="inline-end">
+                        <Tooltip>
+                          <TooltipTrigger render={
+                            <Button variant="outline" size="icon" onClick={handleCopyCode} className="shrink-0">
+                              <CopyIcon className="size-4" />
+                            </Button>
+                          } />
+                          <TooltipContent>Copiar código</TooltipContent>
+                        </Tooltip>
+                      </InputGroupAddon>
+                    </InputGroup>
                   </div>
                 </label>
               )}
@@ -138,50 +146,77 @@ export function InviteFormDialog({ open, onOpenChange, invite }: Props) {
                 </Tooltip>
               </div>
 
-              <div className={`
-                flex flex-col gap-3 max-h-60 overflow-y-auto
-                pr-2 mt-2
-              `}>
-                {invitees.map((inv, i) => (
-                  <div key={i} className="flex gap-2 items-center overflow-hidden">
-                    {/* TODO: add confirmationStatus */}
+              <div className="flex flex-col gap-3 sm:max-h-60 overflow-y-auto">
+                {invitees.map((inv, i, { length }) => (
+                  <div key={i} className="flex max-sm:flex-col gap-2 items-center overflow-hidden">
                     <input
                       type="hidden"
                       name={`invitees[${i}].id`}
                       defaultValue={inv.id}
                     />
-                    <Input
-                      name={`invitees[${i}].name`}
-                      defaultValue={inv.name}
-                      placeholder="Nome do convidado"
-                      className="flex-1"
-                    />
-                    <Select
-                      name={`invitees[${i}].inviteeType`}
-                      defaultValue={inv.inviteeType}
-                      items={inviteeTypeOptions}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        {inviteeTypeOptions.map(it => (
-                          <SelectItem key={it.value} value={it.value}>{it.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex flex-row-reverse items-center w-full sm:contents">
+                      <Popover>
+                        <PopoverTrigger render={(
+                          <div className={`
+                            flex items-center justify-center shrink-0 size-8
+                            max-sm:mx-1
+                          `}>
+                            {inv.confirmationStatus && getConfirmationStatusIcon(inv.confirmationStatus)}
+                          </div>
+                        )} openOnHover />
+                        {inv.confirmationStatus && <PopoverContent>{getConfirmationStatusLabel(inv.confirmationStatus)}</PopoverContent>}
+                      </Popover>
+                      <Input
+                        name={`invitees[${i}].name`}
+                        defaultValue={inv.name}
+                        placeholder="Nome do convidado"
+                        className="flex-1"
+                      />
+                    </div>
+                    <div className="flex w-full sm:contents">
+                      <Select
+                        name={`invitees[${i}].inviteeType`}
+                        defaultValue={inv.inviteeType}
+                        items={inviteeTypeOptions}
+                      >
+                        <SelectTrigger className="w-32 max-sm:w-auto max-sm:grow">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white">
+                          {inviteeTypeOptions.map(it => (
+                            <SelectItem key={it.value} value={it.value}>{it.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
 
-                    <Tooltip>
-                      <TooltipTrigger render={(
-                        <Button variant="ghost" size="icon" onClick={() => handleRemoveInvitee(i)} className="text-destructive hover:text-destructive shrink-0">
-                          <TrashIcon className="size-4" />
-                        </Button>
-                      )} />
-                      <TooltipContent>Remover</TooltipContent>
-                    </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger render={(
+                          <Button variant="ghost" size="icon" onClick={() => handleRemoveInvitee(i)} className="text-destructive hover:text-destructive shrink-0">
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        )} />
+                        <TooltipContent>Remover</TooltipContent>
+                      </Tooltip>
+                    </div>
+
+                    {i < length - 1 && <div className={`
+                      sm:hidden
+                      h-px border-b border-muted border-dashed w-1/2
+                      mt-2
+                    `} />}
                   </div>
                 ))}
-                {/* TODO: add confirmationNotes */}
+                {invite?.confirmationNotes && (
+                  <div className="flex flex-col mt-2">
+                    <label className="text-sm font-semibold mb-2">Observações do convidado</label>
+                    <div className={`
+                      text-sm border-b border-input bg-muted/20 px-3
+                      py-2 text-muted-foreground whitespace-pre-wrap
+                    `}>
+                      {invite.confirmationNotes}
+                    </div>
+                  </div>
+                )}
                 {invitees.length === 0 && (
                   <div className="text-sm text-muted-foreground text-center py-2.5">Nenhum convidado adicionado</div>
                 )}
@@ -190,7 +225,9 @@ export function InviteFormDialog({ open, onOpenChange, invite }: Props) {
           </div>
 
           <DialogFooter className="mt-4">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+            <DialogClose render={(
+              <Button variant="outline">Cancelar</Button>
+            )} />
             <Button type="submit" disabled={isSubmitting || invitees.length === 0}>
               {isSubmitting ? 'Salvando...' : 'Salvar'}
             </Button>
@@ -207,4 +244,28 @@ function getInviteeTypeLabel(type: InviteeType) {
     [InviteeType.CHILD]: 'Criança (< 8 anos)',
   }
   return labels[type]
+}
+
+function getConfirmationStatusIcon(status?: ConfirmationStatus) {
+  switch (status) {
+    case ConfirmationStatus.CONFIRMED:
+      return <CheckCircleIcon className="size-5 text-green-500" />
+    case ConfirmationStatus.REFUSED:
+      return <XCircleIcon className="size-5 text-red-500" />
+    case ConfirmationStatus.PENDING:
+    default:
+      return <HelpCircleIcon className="size-5 text-muted-foreground" />
+  }
+}
+
+function getConfirmationStatusLabel(status?: ConfirmationStatus) {
+  switch (status) {
+    case ConfirmationStatus.CONFIRMED:
+      return 'Confirmado'
+    case ConfirmationStatus.REFUSED:
+      return 'Não irá'
+    case ConfirmationStatus.PENDING:
+    default:
+      return 'Pendente'
+  }
 }

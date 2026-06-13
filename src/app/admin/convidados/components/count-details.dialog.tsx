@@ -5,6 +5,7 @@ import { getCountDetailsAction } from '../actions'
 import { toast } from 'sonner'
 import { JumpingDotsLoader } from '~/components/ui/jumping-dots'
 import { H5, Strong } from '~/components/ui/typography'
+import { cn } from '~/lib/ui'
 
 type CountDetails = Awaited<ReturnType<typeof getCountDetailsAction>>['data']
 
@@ -29,6 +30,7 @@ export function CountDetailsDialog() {
   const rows = details ? Object.entries(details).map(([type, value]) => ({
     type,
     label: getDetailsLabel(type as keyof typeof details),
+    color: getColor(type as keyof typeof details),
     adults: value.adults,
     children: value.children,
   })) : []
@@ -54,10 +56,10 @@ export function CountDetailsDialog() {
                   <Fragment key={row.type}>
                     <tr className="divide-x">
                       <td rowSpan={2}>{row.label}:</td>
-                      <td className="text-center text-md">Adultos: <Strong>{row.adults}</Strong></td>
+                      <td className={cn('text-center text-md', row.color)}>Adultos: <Strong>{row.adults}</Strong></td>
                     </tr>
                     <tr>
-                      <td className="text-center text-md">Crianças: <Strong>{row.children}</Strong></td>
+                      <td className={cn('text-center text-md', row.color)}>Crianças: <Strong>{row.children}</Strong></td>
                     </tr>
                   </Fragment>
                 ))}
@@ -88,4 +90,13 @@ function getDetailsLabel(type: keyof NonNullable<CountDetails>) {
     refused: 'Recusados',
   }
   return labels[type]
+}
+
+function getColor(type: keyof NonNullable<CountDetails>) {
+  const colors: Record<typeof type, string> = {
+    confirmed: 'bg-success/20',
+    pending: 'bg-muted/10',
+    refused: 'bg-destructive/20',
+  }
+  return colors[type]
 }

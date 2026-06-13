@@ -1,52 +1,42 @@
 'use client'
 
-import { TooltipPopupState, Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip'
+import * as React from 'react'
+import { Popover as PopoverPrimitive, type PopoverPopupState, type PopoverTitleState } from '@base-ui/react/popover'
 
 import { cn } from '~/lib/ui'
 
-function TooltipProvider({
-  ...props
-}: TooltipPrimitive.Provider.Props) {
-  return (
-    <TooltipPrimitive.Provider
-      data-slot="tooltip-provider"
-      {...props}
-    />
-  )
+function Popover({ ...props }: PopoverPrimitive.Root.Props) {
+  return <PopoverPrimitive.Root data-slot="popover" {...props} />
 }
 
-function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
-  return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+function PopoverTrigger({ delay = 100, ...props }: PopoverPrimitive.Trigger.Props) {
+  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} delay={delay} />
 }
 
-function TooltipTrigger({ delay = 100, ...props }: TooltipPrimitive.Trigger.Props) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} delay={delay} />
-}
-
-function TooltipContent({
+function PopoverContent({
   className,
-  side = 'top',
-  sideOffset = 4,
   align = 'center',
   alignOffset = 0,
+  side = 'top',
+  sideOffset = 6,
   children,
   ...props
-}: TooltipPrimitive.Popup.Props &
+}: PopoverPrimitive.Popup.Props &
   Pick<
-    TooltipPrimitive.Positioner.Props,
+    PopoverPrimitive.Positioner.Props,
     'align' | 'alignOffset' | 'side' | 'sideOffset'
   >) {
   return (
-    <TooltipPrimitive.Portal>
-      <TooltipPrimitive.Positioner
+    <PopoverPrimitive.Portal>
+      <PopoverPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
         side={side}
         sideOffset={sideOffset}
         className="isolate z-50"
       >
-        <TooltipPrimitive.Popup
-          data-slot="tooltip-content"
+        <PopoverPrimitive.Popup
+          data-slot="popover-content"
           className={clsx(
             `
               z-50 inline-flex w-fit max-w-xs origin-(--transform-origin)
@@ -70,7 +60,7 @@ function TooltipContent({
           {...props}
         >
           {children}
-          <TooltipPrimitive.Arrow className={`
+          <PopoverPrimitive.Arrow className={`
             z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-none
             bg-foreground fill-foreground
             data-[side=bottom]:top-1
@@ -79,15 +69,58 @@ function TooltipContent({
             data-[side=left]:top-1/2! data-[side=left]:-right-1 data-[side=left]:-translate-y-1/2
             data-[side=right]:top-1/2! data-[side=right]:-left-1 data-[side=right]:-translate-y-1/2
             data-[side=top]:-bottom-2.5
-          `} />
-        </TooltipPrimitive.Popup>
-      </TooltipPrimitive.Positioner>
-    </TooltipPrimitive.Portal>
+          `}/>
+        </PopoverPrimitive.Popup>
+      </PopoverPrimitive.Positioner>
+    </PopoverPrimitive.Portal>
   )
 }
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+function PopoverHeader({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="popover-header"
+      className={cn('flex flex-col gap-1 text-sm', className)}
+      {...props}
+    />
+  )
+}
 
-function clsx(baseClassName: string, classNameProp?: string | ((state: TooltipPopupState) => string | undefined)) {
-  return (state: TooltipPopupState) => cn(baseClassName, typeof classNameProp === 'string' ? classNameProp : classNameProp?.(state))
+function PopoverTitle({ className, ...props }: PopoverPrimitive.Title.Props) {
+  return (
+    <PopoverPrimitive.Title
+      data-slot="popover-title"
+      className={clsx('text-xs font-semibold uppercase', className)}
+      {...props}
+    />
+  )
+}
+
+function PopoverDescription({
+  className,
+  ...props
+}: PopoverPrimitive.Description.Props) {
+  return (
+    <PopoverPrimitive.Description
+      data-slot="popover-description"
+      className={clsx(
+        'mt-0.5 text-sm leading-relaxed text-muted-foreground',
+        className,
+      )}
+      {...props}
+    />
+  )
+}
+
+function clsx<T extends PopoverTitleState | PopoverPopupState>(baseClassName: string, classNameProp?: string | ((state: T) => string | undefined)) {
+  return (state: T) => cn(baseClassName, typeof classNameProp === 'string' ? classNameProp : classNameProp?.(state))
+}
+
+export {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
 }

@@ -33,12 +33,9 @@ export const getInviteData = actionClient
     const invitesRepo = new InvitesRepository()
     const invite = await invitesRepo.findByCode(code)
 
-    if (!invite) {
-      // TODO: handle issue involving next-safe-action and 'use cache' sending this as a generic server error
-      return returnValidationErrors(getInviteDataInputSchema, {
-        code: { _errors: ['Código do convite inválido.'] },
-      })
-    }
+    if (!invite) return returnValidationErrors(getInviteDataInputSchema, {
+      code: { _errors: ['Código do convite inválido.'] },
+    })
 
     cacheTag(`invites.${invite.id}`)
 

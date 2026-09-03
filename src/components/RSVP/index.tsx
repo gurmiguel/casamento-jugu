@@ -2,13 +2,13 @@
 
 import { formatDate, subMonths } from 'date-fns'
 import { useRef, useState, type ComponentProps } from 'react'
-import { Button } from '../ui/button'
-import { H2, P } from '../ui/typography'
-import { RSVPDialog } from './RSVPDialog'
-import { ViewAwareContainer } from '../utilitary/view-aware-container'
 import { useMediaQuery } from 'usehooks-ts'
 import { screens } from '~/config/theme'
 import { isElementInViewport } from '~/lib/ui'
+import { Button } from '../ui/button'
+import { H2, P } from '../ui/typography'
+import { ViewAwareContainer } from '../utilitary/view-aware-container'
+import { RSVPDialog } from './RSVPDialog'
 
 type RSVPDialogProps = ComponentProps<typeof RSVPDialog>
 
@@ -19,11 +19,12 @@ interface Props extends Pick<RSVPDialogProps, 'loadInvitees' | 'onSubmit'> {
 
 export function RSVP({ date, code, loadInvitees, onSubmit }: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const isMedium = useMediaQuery(`only screen and (min-width: ${screens.md+1}px)`)
+  const isMedium = useMediaQuery(`only screen and (min-width: ${screens.md+1}px)`, { defaultValue: true, initializeWithValue: false })
 
   const dueDate = subMonths(date, 1)
-  const [today] = useState(() => new Date())
-  const isAfterDueDate = today > dueDate
+  const [today] = useState<Date>(() => new Date())
+
+  const isAfterDueDate = today ? today > dueDate : false
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 

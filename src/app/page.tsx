@@ -11,9 +11,12 @@ import { getGalleryImages } from '~/server/dal/gallery'
 import { Footer } from '~/components/Footer'
 import { RSVP } from '~/components/RSVP'
 import { getInviteData, updateInviteStatus } from '~/server/dal/invites'
+import { getProductsList } from '~/server/dal/products'
+import { GiftRegistry } from '~/components/GiftRegistry'
 
 export default async function Home({ searchParams }: PageProps<'/'>) {
   const images = getGalleryImages()
+  const products = getProductsList()
   let { code: rsvpCode } = await searchParams
   rsvpCode = Array.isArray(rsvpCode) ? rsvpCode[0] : rsvpCode
 
@@ -47,7 +50,9 @@ export default async function Home({ searchParams }: PageProps<'/'>) {
           <Gallery images={images} />
         </Suspense>
 
-        {/* TODO: implement Gift Registry */}
+        <Suspense>
+          <GiftRegistry products={products} />
+        </Suspense>
 
         <Footer />
       </div>

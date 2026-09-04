@@ -17,8 +17,9 @@ import { GiftRegistry } from '~/components/GiftRegistry'
 export default async function Home({ searchParams }: PageProps<'/'>) {
   const images = getGalleryImages()
   const products = getProductsList()
-  let { code: rsvpCode } = await searchParams
+  let { code: rsvpCode, checkout } = await searchParams
   rsvpCode = Array.isArray(rsvpCode) ? rsvpCode[0] : rsvpCode
+  const checkoutSuccess = (Array.isArray(checkout) ? checkout[0] : checkout) === 'success'
 
   return (
     <div className="main relative">
@@ -51,7 +52,7 @@ export default async function Home({ searchParams }: PageProps<'/'>) {
         </Suspense>
 
         <Suspense>
-          <GiftRegistry products={products} />
+          <GiftRegistry products={products} checkoutSuccess={checkoutSuccess} />
         </Suspense>
 
         <Footer />

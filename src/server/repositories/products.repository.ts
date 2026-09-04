@@ -24,6 +24,31 @@ export class ProductsRepository {
 
     return products
   }
+
+  public async createCheckoutSession(productId: string, origin: string): Promise<string | null> {
+    const product = await this.client.products.retrieve(productId, {
+      expand: ['default_price'],
+    })
+
+    const price = product.default_price as Stripe.Price
+    if (!price?.id) {
+      throw new Error('Produto não possui preço padrão configurado.')
+    }
+
+    const session = await this.client.checkout.sessions.create({
+      mode: 'payment',
+      line_items: [
+        {
+          price: price.id,
+          quantity: 1,
+        },
+      ],
+      success_url: `${origin}/?checkout=success`,
+      cancel_url: `${origin}/#presentes`,
+    })
+
+    return session.url
+  }
 }
 
 export interface Product {

@@ -1,44 +1,82 @@
-/* eslint-disable @next/next/no-img-element */
 'use client'
 
-import { use } from 'react'
+import { use, useState } from 'react'
 import type { Product } from '~/server/dal/products'
-import { H2 } from '../ui/typography'
+import { H2, P } from '../ui/typography'
 import { OrnamentDivider } from '../ui/ornament-divider'
+import { ProductCard } from './ProductCard'
+import { ProductModal } from './ProductModal'
+import { CheckoutToast } from './CheckoutToast'
 
 interface Props {
   products: Promise<Product[]>
+  checkoutSuccess?: boolean
 }
 
-export function GiftRegistry({ products: productsPromise }: Props) {
+export function GiftRegistry({ products: productsPromise, checkoutSuccess }: Props) {
   const products = use(productsPromise)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // TODO: implement gift registry (products listing) cards design
-  // TODO: implement checkout redirection flow
+  function handleSelectProduct(product: Product) {
+    setSelectedProduct(product)
+    setIsModalOpen(true)
+  }
+
+  function handleModalOpenChange(open: boolean) {
+    setIsModalOpen(open)
+    if (!open) {
+      setSelectedProduct(null)
+    }
+  }
 
   return (
     <>
+      <CheckoutToast checkoutSuccess={checkoutSuccess} />
+
       <OrnamentDivider className="-mt-4 mb-6" />
 
-      <section className={`
-        container mx-auto mb-12 flex flex-col
-        justify-center items-center
+      <section id="presentes" className={`
+        container mx-auto mb-16 px-4
+        sm:px-6
+        flex flex-col items-center
       `}>
-        <H2 className="mb-8">Lista de Presentes</H2>
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-          {products.map((product) => (
-            <li key={product.id} className="flex flex-col items-center text-center">
-              {product.imageUrl && <img src={product.imageUrl} alt={product.name} className="w-full aspect-square rounded-lg shadow-lg" />}
-              {product.name}<br/>
-              {product.description}<br/>
-              {new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              }).format(product.price / 100)}
-            </li>
-          ))}
-        </ul>
+        <H2 className="mb-4">Lista de Presentes</H2>
+
+        <P className="mb-10 max-w-2xl text-center text-muted-foreground">
+          Sua presença é o nosso maior presente! Mas se desejar nos presentear,
+          escolha um dos itens abaixo:
+        </P>
+
+        {products.length === 0 ? (
+          <P className="my-12 text-center text-muted-foreground">
+            Nenhum presente disponível no momento.
+          </P>
+        ) : (
+          <div className={`
+            grid w-full grid-cols-1
+            md:grid-cols-2
+            lg:grid-cols-4
+            gap-6
+            sm:gap-8
+            max-w-6xl
+          `}>
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onClick={() => handleSelectProduct(product)}
+              />
+            ))}
+          </div>
+        )}
       </section>
+
+      <ProductModal
+        product={selectedProduct}
+        open={isModalOpen}
+        onOpenChange={handleModalOpenChange}
+      />
     </>
   )
 }

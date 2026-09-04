@@ -1,8 +1,9 @@
 'use client'
 
 import { FuseWorker } from 'fuse.js/worker'
-import { EditIcon, Loader2, NotebookPenIcon, PlusIcon, SearchIcon, TrashIcon } from 'lucide-react'
+import { EditIcon, Loader2, NotebookPenIcon, PlusIcon, SearchIcon, Share2Icon, TrashIcon } from 'lucide-react'
 import { ComponentProps, useEffect, useEffectEvent, useMemo, useState } from 'react'
+
 import { toast } from 'sonner'
 import { useMediaQuery } from 'usehooks-ts'
 import { Badge } from '~/components/ui/badge'
@@ -19,6 +20,7 @@ import { ConfirmationStatus, SelectInvite } from '~/server/adapters/data/schemas
 import { deleteInviteAction, getInviteAction } from './actions'
 import { CountDetailsDialog } from './components/count-details.dialog'
 import { InviteFormDialog, InviteWithInvitees } from './components/invite-form.dialog'
+import { generateInvitePdf } from './generate-invite-pdf'
 
 interface Props {
   invites: SelectInvite[]
@@ -45,6 +47,8 @@ export function InvitesPagesComponent({ invites }: Props) {
 
   const [inviteToDelete, setInviteToDelete] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+
+  const [sharingId, setSharingId] = useState<string | null>(null)
   const [filteredInvites, setFilteredInvites] = useState(invites)
 
   const isSmall = useMediaQuery(`(max-width: ${screens.xs}px)`)
@@ -101,6 +105,43 @@ export function InvitesPagesComponent({ invites }: Props) {
       }
     } finally {
       setIsDeleting(false)
+    }
+  }
+
+  async function handleShareInvite(inv: SelectInvite) {
+    if (sharingId !== null) return
+
+    setSharingId(inv.id)
+    try {
+      const pdfBlob = await generateInvitePdf(inv.code)
+      const fileName = `convite-${inv.label.toLowerCase().replace(/[^a-z0-9]/g, '-')}.pdf`
+      const file = new File([pdfBlob], fileName, { type: 'application/pdf' })
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: `Convite de Casamento - ${inv.label}`,
+        })
+      } else {
+        const url = URL.createObjectURL(pdfBlob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = fileName
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+        toast.success('Download do convite iniciado!')
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        // User cancelled share dialog
+        return
+      }
+      console.error(error)
+      toast.error('Erro ao gerar/compartilhar o convite')
+    } finally {
+      setSharingId(null)
     }
   }
 
@@ -210,6 +251,17 @@ export function InvitesPagesComponent({ invites }: Props) {
                   </td>
                   <td className="text-right">
                     <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size={isSmall ? 'icon-xs' : 'icon'}
+                        onClick={() => handleShareInvite(inv)}
+                        disabled={sharingId === inv.id}
+                        title="Compartilhar Convite (PDF)"
+                      >
+                        {sharingId === inv.id
+                          ? <Loader2 className="size-4 animate-spin" />
+                          : <Share2Icon className="size-4" />}
+                      </Button>
                       <Button variant="ghost" size={isSmall ? 'icon-xs' :'icon'} onClick={() => handleOpenEditInvite(inv.id)} title="Editar/Visualizar">
                         {fetchingId === inv.id
                           ? <Loader2 className="size-4 animate-spin" />
